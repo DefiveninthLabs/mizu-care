@@ -141,24 +141,24 @@ export default function ProductsPage() {
               <span>Filters:</span>
             </div>
             
-            <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+            <Select value={selectedBrand || "all"} onValueChange={(val) => setSelectedBrand(val === "all" ? "" : val)}>
               <SelectTrigger className="w-[160px] rounded-full">
                 <SelectValue placeholder="All Brands" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Brands</SelectItem>
+                <SelectItem value="all">All Brands</SelectItem>
                 {brands?.map(brand => (
                   <SelectItem key={brand} value={brand}>{brand}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
             
-            <Select value={selectedType} onValueChange={setSelectedType}>
+            <Select value={selectedType || "all"} onValueChange={(val) => setSelectedType(val === "all" ? "" : val)}>
               <SelectTrigger className="w-[160px] rounded-full">
                 <SelectValue placeholder="All Types" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Types</SelectItem>
+                <SelectItem value="all">All Types</SelectItem>
                 {types?.map(type => (
                   <SelectItem key={type} value={type}>{type}</SelectItem>
                 ))}

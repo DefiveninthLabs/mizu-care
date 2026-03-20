@@ -239,10 +239,10 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
                   <Image
                     src={'/assets/hero-app-mockup.jpg'}
                     alt="MizuCaire AI skin analysis app"
-                    className="w-85 h-auto rounded-[2.5rem] shadow-elevated"
+                    className="rounded-[2.5rem] shadow-elevated"
                     width={340}
                     height={680}
-                    loading="eager"
+                    style={{ width: 'auto', height: 'auto' }}
                     priority
                   />
 
@@ -313,8 +313,8 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
               transition={{ duration: 0.8 }}
               className="relative"
             >
-              <div className="rounded-3xl overflow-hidden">
-                <Image src={'/assets/skin-science.jpg'} alt="Skin layer analysis visualization" fill className="w-full h-100 object-cover" />
+              <div className="relative rounded-3xl overflow-hidden h-[400px]">
+                <Image src={'/assets/skin-science.jpg'} alt="Skin layer analysis visualization" fill className="object-cover" />
               </div>
               {/* Overlay card */}
               <div className="absolute bottom-6 left-6 right-6 bg-card/90 backdrop-blur-md rounded-2xl p-5 border border-border/50">
