@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
-import { getProducts } from '../route';
+import { productDb } from '@/lib/db';
 
 export async function GET() {
-  const products = getProducts();
-  const brands = [...new Set(products.map(p => p.brand))].sort();
-  return NextResponse.json(brands);
+  try {
+    const brands = productDb.getBrands();
+    return NextResponse.json(brands);
+  } catch (error) {
+    console.error('Failed to fetch brands:', error);
+    return NextResponse.json({ error: 'Failed to fetch brands' }, { status: 500 });
+  }
 }

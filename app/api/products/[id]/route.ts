@@ -1,19 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getProducts, setProducts, Product } from '../route';
+import { productDb } from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
-  const products = getProducts();
-  const product = products.find(p => p.id === parseInt(id));
-  
-  if (!product) {
-    return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+  try {
+    const { id } = await params;
+    const product = productDb.getById(parseInt(id));
+    
+    if (!product) {
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+    }
+    
+    return NextResponse.json(product);
+  } catch (error) {
+    console.error('Failed to fetch product:', error);
+    return NextResponse.json({ error: 'Failed to fetch product' }, { status: 500 });
   }
-  
-  return NextResponse.json(product);
 }
 
 export async function PUT(
@@ -24,30 +28,30 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
     const { name, description, price, brand, type, image_url } = body;
-    
-    const products = getProducts();
-    const index = products.findIndex(p => p.id === parseInt(id));
-    
-    if (index === -1) {
-      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+
+    if (!name || price === undefined || !brand || !type) {
+      return NextResponse.json(
+        { error: 'Name, price, brand, and type are required' },
+        { status: 400 }
+      );
     }
     
-    const updatedProduct: Product = {
-      ...products[index],
+    const updatedProduct = productDb.update(parseInt(id), {
       name,
-      description: description || null,
+      description,
       price: parseFloat(price),
       brand,
       type,
-      image_url: image_url || null,
-      updated_at: new Date().toISOString()
-    };
+      image_url
+    });
     
-    products[index] = updatedProduct;
-    setProducts(products);
+    if (!updatedProduct) {
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+    }
     
     return NextResponse.json(updatedProduct);
   } catch (error) {
+    console.error('Failed to update product:', error);
     return NextResponse.json({ error: 'Failed to update product' }, { status: 500 });
   }
 }
@@ -58,18 +62,15 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const products = getProducts();
-    const index = products.findIndex(p => p.id === parseInt(id));
+    const deleted = productDb.delete(parseInt(id));
     
-    if (index === -1) {
+    if (!deleted) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
     
-    products.splice(index, 1);
-    setProducts(products);
-    
     return NextResponse.json({ success: true });
   } catch (error) {
+    console.error('Failed to delete product:', error);
     return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });
   }
 }

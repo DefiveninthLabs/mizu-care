@@ -242,7 +242,7 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
                     className="rounded-[2.5rem] shadow-elevated"
                     width={340}
                     height={680}
-                    style={{ width: 'auto', height: 'auto' }}
+                    loading="eager"
                     priority
                   />
 
@@ -313,8 +313,14 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
               transition={{ duration: 0.8 }}
               className="relative"
             >
-              <div className="relative rounded-3xl overflow-hidden h-[400px]">
-                <Image src={'/assets/skin-science.jpg'} alt="Skin layer analysis visualization" fill className="object-cover" />
+              <div className="relative rounded-3xl overflow-hidden" style={{ height: '400px' }}>
+                <Image 
+                  src={'/assets/skin-science.jpg'} 
+                  alt="Skin layer analysis visualization" 
+                  fill 
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover" 
+                />
               </div>
               {/* Overlay card */}
               <div className="absolute bottom-6 left-6 right-6 bg-card/90 backdrop-blur-md rounded-2xl p-5 border border-border/50">
