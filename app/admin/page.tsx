@@ -45,6 +45,7 @@ import {
 import { Plus, Pencil, Trash2, Package, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { LanguageSwitcher } from "@/components/language-switcher"
 
 interface Product {
   id: number
@@ -172,13 +173,17 @@ export default function AdminPage() {
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
-            <div>
-              <h1 className="text-3xl font-bold text-foreground font-display">Product Admin</h1>
-              <p className="text-muted-foreground">Manage your skincare products</p>
-            </div>
+<div>
+            <h1 className="text-3xl font-bold text-foreground font-display">Product Admin</h1>
+            <p className="text-muted-foreground">Manage your skincare products</p>
           </div>
-          
-          <Dialog open={isDialogOpen} onOpenChange={(open) => {
+        </div>
+
+        <div className="flex items-center gap-4">
+          <LanguageSwitcher variant="select" showNativeName />
+        </div>
+        
+        <Dialog open={isDialogOpen} onOpenChange={(open) => {
             setIsDialogOpen(open)
             if (!open) resetForm()
           }}>

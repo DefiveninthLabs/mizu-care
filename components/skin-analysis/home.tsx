@@ -19,6 +19,7 @@ import {
   CheckCircle2,
 } from "lucide-react"
 import Image from 'next/image'
+import { LanguageSwitcher } from '@/components/language-switcher'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -139,10 +140,11 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
             <a href="#reviews" className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground transition-colors">
               Reviews
             </a>
-            <a href="/products" className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground transition-colors">
+<a href="/products" className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground transition-colors">
               Products
             </a>
-              <Button onClick={onStart} size="sm" className="rounded-full">
+            <LanguageSwitcher variant="minimal" className="hidden sm:flex" />
+            <Button onClick={onStart} size="sm" className="rounded-full">
                 Try Scan <ArrowRight className="ml-1 h-3.5 w-3.5" />
               </Button>
           </div>
