@@ -2,13 +2,6 @@
 
 import { useI18n } from '@/lib/i18n'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -18,40 +11,17 @@ import { Button } from '@/components/ui/button'
 import { Globe } from 'lucide-react'
 
 interface LanguageSwitcherProps {
-  variant?: 'select' | 'dropdown' | 'minimal'
+  variant?: 'dropdown' | 'minimal'
   showFlag?: boolean
-  showNativeName?: boolean
   className?: string
 }
 
 export function LanguageSwitcher({
   variant = 'dropdown',
   showFlag = true,
-  showNativeName = false,
   className,
 }: LanguageSwitcherProps) {
   const { locale, setLocale, locales, currentLocaleInfo } = useI18n()
-
-  if (variant === 'select') {
-    return (
-      <Select value={locale} onValueChange={(value) => setLocale(value as typeof locale)}>
-        <SelectTrigger className={className || "w-[140px]"}>
-          <SelectValue>
-            {showFlag && <span className="mr-2">{currentLocaleInfo.flag}</span>}
-            {showNativeName ? currentLocaleInfo.nativeName : currentLocaleInfo.name}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          {locales.map((loc) => (
-            <SelectItem key={loc.code} value={loc.code}>
-              {showFlag && <span className="mr-2">{loc.flag}</span>}
-              {showNativeName ? loc.nativeName : loc.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    )
-  }
 
   if (variant === 'minimal') {
     return (
@@ -59,7 +29,7 @@ export function LanguageSwitcher({
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="sm" className={className}>
             <Globe className="h-4 w-4 mr-1" />
-            <span className="uppercase text-xs">{locale}</span>
+            <span className="uppercase text-xs font-semibold">{locale}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
@@ -67,7 +37,7 @@ export function LanguageSwitcher({
             <DropdownMenuItem
               key={loc.code}
               onClick={() => setLocale(loc.code)}
-              className={locale === loc.code ? 'bg-accent' : ''}
+              className={locale === loc.code ? 'bg-accent font-medium' : ''}
             >
               {showFlag && <span className="mr-2">{loc.flag}</span>}
               {loc.nativeName}
@@ -84,7 +54,7 @@ export function LanguageSwitcher({
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className={className}>
           {showFlag && <span className="mr-2">{currentLocaleInfo.flag}</span>}
-          {showNativeName ? currentLocaleInfo.nativeName : currentLocaleInfo.name}
+          {currentLocaleInfo.nativeName}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -92,7 +62,7 @@ export function LanguageSwitcher({
           <DropdownMenuItem
             key={loc.code}
             onClick={() => setLocale(loc.code)}
-            className={locale === loc.code ? 'bg-accent' : ''}
+            className={locale === loc.code ? 'bg-accent font-medium' : ''}
           >
             {showFlag && <span className="mr-2">{loc.flag}</span>}
             {loc.nativeName}

@@ -20,6 +20,7 @@ import {
 } from "lucide-react"
 import Image from 'next/image'
 import { LanguageSwitcher } from '@/components/language-switcher'
+import { useI18n } from '@/lib/i18n'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -40,27 +41,6 @@ const skinMetrics = [
   { label: "Elasticity", value: 85, color: "hsl(200 45% 50%)" },
   { label: "Texture", value: 62, color: "hsl(180 40% 45%)" },
   { label: "Clarity", value: 91, color: "hsl(160 45% 50%)" },
-]
-
-const testimonials = [
-  {
-    name: "Amira K.",
-    text: "Finally found products that actually work for my combination skin. My breakouts cleared up in 3 weeks!",
-    skinType: "Combination",
-    avatar: "AK",
-  },
-  {
-    name: "Sarah L.",
-    text: "The AI nailed my skin type. I've been using the wrong products for years — MizuCaire changed everything.",
-    skinType: "Sensitive",
-    avatar: "SL",
-  },
-  {
-    name: "Priya M.",
-    text: "Love that it takes 2 minutes. Got my whole morning and evening routine sorted. My skin is glowing!",
-    skinType: "Dry",
-    avatar: "PM",
-  },
 ]
 
 function AnimatedCounter({ value, suffix = "" }: { value: number; suffix?: string }) {
@@ -117,10 +97,32 @@ function MetricBar({ label, value, color, delay }: { label: string; value: numbe
 }
 
 const HomeScreen = ({ onStart }: { onStart: () => void }) => {
+  const { t } = useI18n()
   const heroRef = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] })
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 150])
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
+
+  const testimonials = [
+    {
+      name: "Amira K.",
+      text: "Finally found products that actually work for my combination skin. My breakouts cleared up in 3 weeks!",
+      skinType: t('home.reviews.skin.combination'),
+      avatar: "AK",
+    },
+    {
+      name: "Sarah L.",
+      text: "The AI nailed my skin type. I've been using the wrong products for years — MizuCaire changed everything.",
+      skinType: t('home.reviews.skin.sensitive'),
+      avatar: "SL",
+    },
+    {
+      name: "Priya M.",
+      text: "Love that it takes 2 minutes. Got my whole morning and evening routine sorted. My skin is glowing!",
+      skinType: t('home.reviews.skin.dry'),
+      avatar: "PM",
+    },
+  ]
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
@@ -135,25 +137,24 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
           </div>
           <div className="flex items-center gap-4">
             <a href="#science" className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Science
+              {t('nav.science')}
             </a>
             <a href="#reviews" className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Reviews
+              {t('nav.reviews')}
             </a>
-<a href="/products" className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Products
+            <a href="/products" className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground transition-colors">
+              {t('nav.products')}
             </a>
             <LanguageSwitcher variant="minimal" className="hidden sm:flex" />
             <Button onClick={onStart} size="sm" className="rounded-full">
-                Try Scan <ArrowRight className="ml-1 h-3.5 w-3.5" />
-              </Button>
+              {t('nav.tryScan')} <ArrowRight className="ml-1 h-3.5 w-3.5" />
+            </Button>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section — Full screen immersive */}
+      {/* Hero Section */}
       <section ref={heroRef} className="relative min-h-screen flex items-center pt-16">
-        {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
             animate={{ rotate: 360 }}
@@ -176,7 +177,7 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
               <motion.div initial="hidden" animate="visible" className="space-y-8 max-w-xl">
                 <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-4 py-1.5 text-sm font-medium text-primary">
                   <Zap className="h-3.5 w-3.5" />
-                  2-Minute AI Skin Analysis
+                  {t('home.badge')}
                 </motion.div>
 
                 <motion.h1
@@ -184,53 +185,52 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
                   custom={1}
                   className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground font-display leading-[1.05]"
                 >
-                  Your Skin,{" "}
-                  <span className="text-gradient">Decoded.</span>
+                  {t('home.hero.title1')}{" "}
+                  <span className="text-gradient">{t('home.hero.title2')}</span>
                 </motion.h1>
 
                 <motion.p variants={fadeUp} custom={2} className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
-                  Stop guessing. MizuCaire uses computer vision to map your skin's unique profile and build a routine that actually works.
+                  {t('home.hero.subtitle')}
                 </motion.p>
 
                 <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row gap-4 pt-2">
-                    <Button onClick={onStart} size="lg" className="rounded-full px-10 py-7 text-lg font-medium w-full sm:w-auto shadow-elevated hover:shadow-card transition-shadow">
-                      Analyze My Skin
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
+                  <Button onClick={onStart} size="lg" className="rounded-full px-10 py-7 text-lg font-medium w-full sm:w-auto shadow-elevated hover:shadow-card transition-shadow">
+                    {t('home.hero.cta')}
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
                   <a href="#science">
                     <Button variant="outline" size="lg" className="rounded-full px-8 py-7 text-lg w-full sm:w-auto">
-                      See the Science
+                      {t('home.hero.science')}
                       <ChevronDown className="ml-2 h-5 w-5" />
                     </Button>
                   </a>
                 </motion.div>
 
-                {/* Stats row */}
                 <motion.div variants={fadeUp} custom={4} className="flex items-center gap-8 pt-4">
                   <div>
                     <p className="text-2xl font-bold text-foreground font-display">
                       <AnimatedCounter value={50} suffix="K+" />
                     </p>
-                    <p className="text-xs text-muted-foreground">Scans completed</p>
+                    <p className="text-xs text-muted-foreground">{t('home.stats.scans')}</p>
                   </div>
                   <div className="h-8 w-px bg-border" />
                   <div>
                     <p className="text-2xl font-bold text-foreground font-display">
                       <AnimatedCounter value={4} suffix=".8★" />
                     </p>
-                    <p className="text-xs text-muted-foreground">User rating</p>
+                    <p className="text-xs text-muted-foreground">{t('home.stats.rating')}</p>
                   </div>
                   <div className="h-8 w-px bg-border" />
                   <div>
                     <p className="text-2xl font-bold text-foreground font-display">
                       <AnimatedCounter value={98} suffix="%" />
                     </p>
-                    <p className="text-xs text-muted-foreground">Accuracy rate</p>
+                    <p className="text-xs text-muted-foreground">{t('home.stats.accuracy')}</p>
                   </div>
                 </motion.div>
               </motion.div>
 
-              {/* Hero visual — App mockup with floating metrics */}
+              {/* Hero visual */}
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -248,7 +248,6 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
                     priority
                   />
 
-                  {/* Floating metric cards */}
                   <motion.div
                     animate={{ y: [0, -8, 0] }}
                     transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -259,7 +258,7 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
                         <Droplets className="h-4 w-4 text-primary" />
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Hydration</p>
+                        <p className="text-xs text-muted-foreground">{t('home.floating.hydration')}</p>
                         <p className="text-sm font-bold text-foreground">78%</p>
                       </div>
                     </div>
@@ -275,8 +274,8 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
                         <Eye className="h-4 w-4 text-primary" />
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Pore Size</p>
-                        <p className="text-sm font-bold text-foreground">Small</p>
+                        <p className="text-xs text-muted-foreground">{t('home.floating.poreSize')}</p>
+                        <p className="text-sm font-bold text-foreground">{t('home.floating.poreValue')}</p>
                       </div>
                     </div>
                   </motion.div>
@@ -291,7 +290,7 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
                         <TrendingUp className="h-4 w-4 text-primary" />
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Skin Score</p>
+                        <p className="text-xs text-muted-foreground">{t('home.floating.skinScore')}</p>
                         <p className="text-sm font-bold text-foreground">85/100</p>
                       </div>
                     </div>
@@ -307,7 +306,6 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
       <section id="science" className="py-24 bg-card relative">
         <div className="container mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Science visual */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -316,17 +314,16 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
               className="relative"
             >
               <div className="relative rounded-3xl overflow-hidden" style={{ height: '400px' }}>
-                <Image 
-                  src={'/assets/skin-science.jpg'} 
-                  alt="Skin layer analysis visualization" 
-                  fill 
+                <Image
+                  src={'/assets/skin-science.jpg'}
+                  alt="Skin layer analysis visualization"
+                  fill
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover" 
+                  className="object-cover"
                 />
               </div>
-              {/* Overlay card */}
               <div className="absolute bottom-6 left-6 right-6 bg-card/90 backdrop-blur-md rounded-2xl p-5 border border-border/50">
-                <p className="text-xs font-medium text-primary uppercase tracking-wider mb-3">Live Analysis Preview</p>
+                <p className="text-xs font-medium text-primary uppercase tracking-wider mb-3">{t('home.science.preview')}</p>
                 <div className="space-y-3">
                   {skinMetrics.map((m, i) => (
                     <MetricBar key={m.label} {...m} delay={i * 0.15} />
@@ -335,26 +332,23 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
               </div>
             </motion.div>
 
-            {/* Science content */}
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="space-y-8">
               <motion.div variants={fadeUp} custom={0}>
-                <span className="text-sm font-medium text-primary uppercase tracking-wider">The Science</span>
+                <span className="text-sm font-medium text-primary uppercase tracking-wider">{t('home.science.tag')}</span>
               </motion.div>
               <motion.h2 variants={fadeUp} custom={1} className="text-3xl sm:text-4xl font-bold text-foreground font-display leading-tight">
-                We Analyze What Your Eyes Can't See
+                {t('home.science.title')}
               </motion.h2>
               <motion.p variants={fadeUp} custom={2} className="text-muted-foreground leading-relaxed">
-                Our AI examines over 14 skin markers across multiple dimensions — from surface texture
-                and pore density to hydration patterns and melanin distribution — to build a complete
-                picture of your skin's health.
+                {t('home.science.subtitle')}
               </motion.p>
 
               <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid grid-cols-2 gap-4">
                 {[
-                  { icon: Scan, label: "Texture Mapping", desc: "Surface roughness analysis" },
-                  { icon: Droplets, label: "Hydration Index", desc: "Moisture level detection" },
-                  { icon: Layers, label: "Pore Analysis", desc: "Size & density mapping" },
-                  { icon: FlaskConical, label: "Oil Balance", desc: "Sebum production levels" },
+                  { icon: Scan, label: t('home.science.texture'), desc: t('home.science.textureDesc') },
+                  { icon: Droplets, label: t('home.science.hydration'), desc: t('home.science.hydrationDesc') },
+                  { icon: Layers, label: t('home.science.pore'), desc: t('home.science.poreDesc') },
+                  { icon: FlaskConical, label: t('home.science.oil'), desc: t('home.science.oilDesc') },
                 ].map((item) => (
                   <motion.div key={item.label} variants={fadeUp} custom={0}>
                     <Card className="p-4 border-none shadow-card bg-background hover:shadow-elevated transition-all duration-300 group cursor-default">
@@ -370,24 +364,24 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
         </div>
       </section>
 
-      {/* Why MizuCaire — Unique value props */}
+      {/* Why MizuCaire */}
       <section className="py-24">
         <div className="container mx-auto px-6">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-16">
             <motion.h2 variants={fadeUp} custom={0} className="text-3xl sm:text-4xl font-bold text-foreground font-display">
-              Why People Love MizuCaire
+              {t('home.why.title')}
             </motion.h2>
             <motion.p variants={fadeUp} custom={1} className="mt-4 text-muted-foreground max-w-lg mx-auto">
-              Built for real people who want real results — not generic advice.
+              {t('home.why.subtitle')}
             </motion.p>
           </motion.div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
             {[
-              { icon: Clock, title: "2 Minutes", desc: "From selfie to a full personalized routine. No lengthy questionnaires.", accent: "bg-primary/10" },
-              { icon: ShieldCheck, title: "100% Private", desc: "Your photos never leave your device. Zero data stored on our servers.", accent: "bg-accent" },
-              { icon: Heart, title: "Dermatologist-Level", desc: "Recommendations backed by clinical skincare research and real science.", accent: "bg-secondary" },
-              { icon: Users, title: "All Skin Types", desc: "From oily to sensitive, from teen to mature — we've got you covered.", accent: "bg-primary/10" },
+              { icon: Clock, title: t('home.why.speed.title'), desc: t('home.why.speed.desc'), accent: "bg-primary/10" },
+              { icon: ShieldCheck, title: t('home.why.privacy.title'), desc: t('home.why.privacy.desc'), accent: "bg-accent" },
+              { icon: Heart, title: t('home.why.derm.title'), desc: t('home.why.derm.desc'), accent: "bg-secondary" },
+              { icon: Users, title: t('home.why.allSkin.title'), desc: t('home.why.allSkin.desc'), accent: "bg-primary/10" },
             ].map((item, i) => (
               <motion.div
                 key={item.title}
@@ -415,17 +409,17 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
         <div className="container mx-auto px-6">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-16">
             <motion.h2 variants={fadeUp} custom={0} className="text-3xl sm:text-4xl font-bold text-foreground font-display">
-              Real Results, Real People
+              {t('home.reviews.title')}
             </motion.h2>
             <motion.p variants={fadeUp} custom={1} className="mt-4 text-muted-foreground max-w-md mx-auto">
-              See what our community says about their skin transformation
+              {t('home.reviews.subtitle')}
             </motion.p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {testimonials.map((t, i) => (
+            {testimonials.map((testimonial, i) => (
               <motion.div
-                key={t.name}
+                key={testimonial.name}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
@@ -438,14 +432,14 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
                       <div key={si} className="w-4 h-4 rounded-full bg-primary/80" />
                     ))}
                   </div>
-                  <p className="text-foreground leading-relaxed flex-1 italic">"{t.text}"</p>
+                  <p className="text-foreground leading-relaxed flex-1 italic">&quot;{testimonial.text}&quot;</p>
                   <div className="flex items-center gap-3 mt-6 pt-4 border-t border-border">
                     <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-sm font-bold text-primary-foreground">
-                      {t.avatar}
+                      {testimonial.avatar}
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-foreground">{t.name}</p>
-                      <p className="text-xs text-muted-foreground">{t.skinType} Skin</p>
+                      <p className="text-sm font-semibold text-foreground">{testimonial.name}</p>
+                      <p className="text-xs text-muted-foreground">{testimonial.skinType} Skin</p>
                     </div>
                   </div>
                 </Card>
@@ -461,10 +455,10 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
           <div className="grid lg:grid-cols-2 gap-16 items-center max-w-5xl mx-auto">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="space-y-6">
               <motion.h2 variants={fadeUp} custom={0} className="text-3xl sm:text-4xl font-bold text-foreground font-display leading-tight">
-                Everything You Get — Completely Free
+                {t('home.cta.title')}
               </motion.h2>
               <motion.p variants={fadeUp} custom={1} className="text-muted-foreground leading-relaxed">
-                No subscriptions, no hidden fees. Just real results.
+                {t('home.cta.subtitle')}
               </motion.p>
             </motion.div>
 
@@ -497,7 +491,6 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
             transition={{ duration: 0.8 }}
             className="relative overflow-hidden rounded-4xl bg-hero-gradient px-8 py-16 sm:p-20 text-center"
           >
-            {/* Decorative circles */}
             <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-primary-foreground/5 -translate-y-1/2 translate-x-1/3" />
             <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-primary-foreground/5 translate-y-1/3 -translate-x-1/4" />
 
@@ -509,10 +502,10 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
                 No sign-up required. Take a selfie, answer a few questions, and let our AI do the rest.
               </p>
               <div className="mt-10">
-                  <Button onClick={onStart} size="lg" variant="secondary" className="rounded-full px-10 py-7 text-lg font-medium shadow-elevated hover:scale-105 transition-transform">
-                    Start My Free Analysis
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+                <Button onClick={onStart} size="lg" variant="secondary" className="rounded-full px-10 py-7 text-lg font-medium shadow-elevated hover:scale-105 transition-transform">
+                  {t('home.cta.button')}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
               </div>
             </div>
           </motion.div>
@@ -526,12 +519,12 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
               <Image src="/icon-white.png" alt="MizuCaire" width={16} height={16} className="w-4 h-4 object-contain" />
             </div>
-            <span className="font-semibold text-foreground font-  display">MizuCaire</span>
+            <span className="font-semibold text-foreground font-display">MizuCaire</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <a href="#science" className="hover:text-foreground transition-colors">Science</a>
-            <a href="#reviews" className="hover:text-foreground transition-colors">Reviews</a>
-            <Button onClick={onStart} className="hover:text-foreground transition-colors">Get Started</Button>
+            <a href="#science" className="hover:text-foreground transition-colors">{t('nav.science')}</a>
+            <a href="#reviews" className="hover:text-foreground transition-colors">{t('nav.reviews')}</a>
+            <Button onClick={onStart} className="hover:text-foreground transition-colors">{t('home.cta.button')}</Button>
           </div>
           <p className="text-sm text-muted-foreground">© 2026 MizuCaire. All rights reserved.</p>
         </div>

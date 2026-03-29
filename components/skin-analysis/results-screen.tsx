@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Star,
 } from "lucide-react"
+import { useI18n } from '@/lib/i18n'
 
 interface ResultsScreenProps {
   skinData: SkinData
@@ -29,209 +30,83 @@ type Product = {
 
 const productRecommendations: Record<string, Product[]> = {
   Oily: [
-    {
-      name: "Oil-Free Gel Cleanser",
-      brand: "CeraVe",
-      type: "Cleanser",
-      price: "$15",
-      rating: 4.7,
-      image: "/products/cleanser.jpg",
-    },
-    {
-      name: "Niacinamide 10% + Zinc 1%",
-      brand: "The Ordinary",
-      type: "Serum",
-      price: "$6",
-      rating: 4.5,
-      image: "/products/serum.jpg",
-    },
-    {
-      name: "Ultra-Light Daily Moisturizer",
-      brand: "Neutrogena",
-      type: "Moisturizer",
-      price: "$12",
-      rating: 4.3,
-      image: "/products/moisturizer.jpg",
-    },
-    {
-      name: "Clear Skin Sunscreen SPF 50",
-      brand: "La Roche-Posay",
-      type: "Sunscreen",
-      price: "$35",
-      rating: 4.8,
-      image: "/products/sunscreen.jpg",
-    },
+    { name: "Oil-Free Gel Cleanser", brand: "CeraVe", type: "Cleanser", price: "$15", rating: 4.7, image: "/products/cleanser.jpg" },
+    { name: "Niacinamide 10% + Zinc 1%", brand: "The Ordinary", type: "Serum", price: "$6", rating: 4.5, image: "/products/serum.jpg" },
+    { name: "Ultra-Light Daily Moisturizer", brand: "Neutrogena", type: "Moisturizer", price: "$12", rating: 4.3, image: "/products/moisturizer.jpg" },
+    { name: "Clear Skin Sunscreen SPF 50", brand: "La Roche-Posay", type: "Sunscreen", price: "$35", rating: 4.8, image: "/products/sunscreen.jpg" },
   ],
   Dry: [
-    {
-      name: "Hydrating Cream Cleanser",
-      brand: "CeraVe",
-      type: "Cleanser",
-      price: "$16",
-      rating: 4.8,
-      image: "/products/cleanser.jpg",
-    },
-    {
-      name: "Hyaluronic Acid 2% + B5",
-      brand: "The Ordinary",
-      type: "Serum",
-      price: "$8",
-      rating: 4.6,
-      image: "/products/serum.jpg",
-    },
-    {
-      name: "Moisturizing Cream",
-      brand: "CeraVe",
-      type: "Moisturizer",
-      price: "$19",
-      rating: 4.9,
-      image: "/products/moisturizer.jpg",
-    },
-    {
-      name: "Cicaplast Baume B5",
-      brand: "La Roche-Posay",
-      type: "Treatment",
-      price: "$16",
-      rating: 4.7,
-      image: "/products/treatment.jpg",
-    },
+    { name: "Hydrating Cream Cleanser", brand: "CeraVe", type: "Cleanser", price: "$16", rating: 4.8, image: "/products/cleanser.jpg" },
+    { name: "Hyaluronic Acid 2% + B5", brand: "The Ordinary", type: "Serum", price: "$8", rating: 4.6, image: "/products/serum.jpg" },
+    { name: "Moisturizing Cream", brand: "CeraVe", type: "Moisturizer", price: "$19", rating: 4.9, image: "/products/moisturizer.jpg" },
+    { name: "Cicaplast Baume B5", brand: "La Roche-Posay", type: "Treatment", price: "$16", rating: 4.7, image: "/products/treatment.jpg" },
   ],
   Combination: [
-    {
-      name: "Gentle Foaming Cleanser",
-      brand: "CeraVe",
-      type: "Cleanser",
-      price: "$15",
-      rating: 4.6,
-      image: "/products/cleanser.jpg",
-    },
-    {
-      name: "Alpha Arbutin 2% + HA",
-      brand: "The Ordinary",
-      type: "Serum",
-      price: "$9",
-      rating: 4.4,
-      image: "/products/serum.jpg",
-    },
-    {
-      name: "PM Facial Moisturizing Lotion",
-      brand: "CeraVe",
-      type: "Moisturizer",
-      price: "$14",
-      rating: 4.7,
-      image: "/products/moisturizer.jpg",
-    },
-    {
-      name: "Anthelios Mineral SPF 50",
-      brand: "La Roche-Posay",
-      type: "Sunscreen",
-      price: "$34",
-      rating: 4.5,
-      image: "/products/sunscreen.jpg",
-    },
+    { name: "Gentle Foaming Cleanser", brand: "CeraVe", type: "Cleanser", price: "$15", rating: 4.6, image: "/products/cleanser.jpg" },
+    { name: "Alpha Arbutin 2% + HA", brand: "The Ordinary", type: "Serum", price: "$9", rating: 4.4, image: "/products/serum.jpg" },
+    { name: "PM Facial Moisturizing Lotion", brand: "CeraVe", type: "Moisturizer", price: "$14", rating: 4.7, image: "/products/moisturizer.jpg" },
+    { name: "Anthelios Mineral SPF 50", brand: "La Roche-Posay", type: "Sunscreen", price: "$34", rating: 4.5, image: "/products/sunscreen.jpg" },
   ],
   Sensitive: [
-    {
-      name: "Toleriane Dermo-Cleanser",
-      brand: "La Roche-Posay",
-      type: "Cleanser",
-      price: "$26",
-      rating: 4.8,
-      image: "/products/cleanser.jpg",
-    },
-    {
-      name: "Centella Sensitive Serum",
-      brand: "COSRX",
-      type: "Serum",
-      price: "$24",
-      rating: 4.5,
-      image: "/products/serum.jpg",
-    },
-    {
-      name: "Toleriane Ultra Cream",
-      brand: "La Roche-Posay",
-      type: "Moisturizer",
-      price: "$32",
-      rating: 4.9,
-      image: "/products/moisturizer.jpg",
-    },
-    {
-      name: "Mineral Sunscreen SPF 50",
-      brand: "EltaMD",
-      type: "Sunscreen",
-      price: "$41",
-      rating: 4.8,
-      image: "/products/sunscreen.jpg",
-    },
+    { name: "Toleriane Dermo-Cleanser", brand: "La Roche-Posay", type: "Cleanser", price: "$26", rating: 4.8, image: "/products/cleanser.jpg" },
+    { name: "Centella Sensitive Serum", brand: "COSRX", type: "Serum", price: "$24", rating: 4.5, image: "/products/serum.jpg" },
+    { name: "Toleriane Ultra Cream", brand: "La Roche-Posay", type: "Moisturizer", price: "$32", rating: 4.9, image: "/products/moisturizer.jpg" },
+    { name: "Mineral Sunscreen SPF 50", brand: "EltaMD", type: "Sunscreen", price: "$41", rating: 4.8, image: "/products/sunscreen.jpg" },
   ],
   Normal: [
-    {
-      name: "Hydrating Facial Cleanser",
-      brand: "CeraVe",
-      type: "Cleanser",
-      price: "$15",
-      rating: 4.7,
-      image: "/products/cleanser.jpg",
-    },
-    {
-      name: "Vitamin C Suspension 23%",
-      brand: "The Ordinary",
-      type: "Serum",
-      price: "$6",
-      rating: 4.3,
-      image: "/products/serum.jpg",
-    },
-    {
-      name: "Daily Moisturizing Lotion",
-      brand: "CeraVe",
-      type: "Moisturizer",
-      price: "$14",
-      rating: 4.8,
-      image: "/products/moisturizer.jpg",
-    },
-    {
-      name: "UV Clear SPF 46",
-      brand: "EltaMD",
-      type: "Sunscreen",
-      price: "$39",
-      rating: 4.7,
-      image: "/products/sunscreen.jpg",
-    },
+    { name: "Hydrating Facial Cleanser", brand: "CeraVe", type: "Cleanser", price: "$15", rating: 4.7, image: "/products/cleanser.jpg" },
+    { name: "Vitamin C Suspension 23%", brand: "The Ordinary", type: "Serum", price: "$6", rating: 4.3, image: "/products/serum.jpg" },
+    { name: "Daily Moisturizing Lotion", brand: "CeraVe", type: "Moisturizer", price: "$14", rating: 4.8, image: "/products/moisturizer.jpg" },
+    { name: "UV Clear SPF 46", brand: "EltaMD", type: "Sunscreen", price: "$39", rating: 4.7, image: "/products/sunscreen.jpg" },
   ],
-}
-
-const skinTypeInfo: Record<string, { color: string; icon: React.ReactNode; tip: string }> = {
-  Oily: {
-    color: "bg-primary/10 text-primary",
-    icon: <Droplets className="h-6 w-6" />,
-    tip: "Focus on oil control and gentle cleansing without stripping your skin.",
-  },
-  Dry: {
-    color: "bg-accent text-accent-foreground",
-    icon: <Sun className="h-6 w-6" />,
-    tip: "Prioritize hydration and moisture-locking ingredients like ceramides.",
-  },
-  Combination: {
-    color: "bg-secondary text-secondary-foreground",
-    icon: <Sparkles className="h-6 w-6" />,
-    tip: "Balance is key - use targeted treatments for different zones.",
-  },
-  Sensitive: {
-    color: "bg-primary/15 text-primary",
-    icon: <Sparkles className="h-6 w-6" />,
-    tip: "Gentle, fragrance-free products are your best friends.",
-  },
-  Normal: {
-    color: "bg-primary/10 text-primary",
-    icon: <Sparkles className="h-6 w-6" />,
-    tip: "Maintain your healthy skin with preventative care.",
-  },
 }
 
 export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProps) {
+  const { t } = useI18n()
   const { skinType, concerns, recommendations } = skinData
   const products = productRecommendations[skinType] || productRecommendations.Normal
-  const typeInfo = skinTypeInfo[skinType] || skinTypeInfo.Normal
+
+  const skinTypeColors: Record<string, string> = {
+    Oily: "bg-primary/10 text-primary",
+    Dry: "bg-accent text-accent-foreground",
+    Combination: "bg-secondary text-secondary-foreground",
+    Sensitive: "bg-primary/15 text-primary",
+    Normal: "bg-primary/10 text-primary",
+  }
+
+  const skinTypeIcons: Record<string, React.ReactNode> = {
+    Oily: <Droplets className="h-6 w-6" />,
+    Dry: <Sun className="h-6 w-6" />,
+    Combination: <Sparkles className="h-6 w-6" />,
+    Sensitive: <Sparkles className="h-6 w-6" />,
+    Normal: <Sparkles className="h-6 w-6" />,
+  }
+
+  const skinTypeTipKeys: Record<string, keyof ReturnType<typeof useI18n>['t'] extends (key: infer K) => string ? K : never, string> = {
+    Oily: 'results.tip.oily',
+    Dry: 'results.tip.dry',
+    Combination: 'results.tip.combination',
+    Sensitive: 'results.tip.sensitive',
+    Normal: 'results.tip.normal',
+  } as any
+
+  const skinTypeNameKeys: Record<string, string> = {
+    Oily: t('results.skinType.oily'),
+    Dry: t('results.skinType.dry'),
+    Combination: t('results.skinType.combination'),
+    Sensitive: t('results.skinType.sensitive'),
+    Normal: t('results.skinType.normal'),
+  }
+
+  const tipKey = skinTypeTipKeys[skinType] || 'results.tip.normal'
+  const color = skinTypeColors[skinType] || skinTypeColors.Normal
+  const icon = skinTypeIcons[skinType] || skinTypeIcons.Normal
+  const skinTypeName = skinTypeNameKeys[skinType] || skinType
+
+  const routineSteps = {
+    morning: ["Cleanser", "Serum", "Moisturizer", "Sunscreen"],
+    evening: ["Cleanser", "Treatment", "Serum", "Moisturizer"],
+  }
 
   return (
     <div className="min-h-screen bg-background pb-8">
@@ -239,7 +114,7 @@ export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProp
       <div className="bg-primary px-6 pb-20 pt-12">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-semibold text-primary-foreground">
-            Your Results
+            {t('results.title')}
           </h1>
           <Button
             variant="ghost"
@@ -255,21 +130,21 @@ export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProp
       <div className="-mt-12 px-6">
         <Card className="overflow-hidden rounded-2xl bg-card p-6 shadow-lg">
           <div className="flex items-start gap-4">
-            <div className={`rounded-xl p-3 ${typeInfo.color}`}>
-              {typeInfo.icon}
+            <div className={`rounded-xl p-3 ${color}`}>
+              {icon}
             </div>
             <div className="flex-1">
-              <p className="text-sm text-muted-foreground">Your Skin Type</p>
-              <h2 className="text-2xl font-bold text-foreground">{skinType}</h2>
+              <p className="text-sm text-muted-foreground">{t('results.skinType')}</p>
+              <h2 className="text-2xl font-bold text-foreground">{skinTypeName}</h2>
             </div>
           </div>
           <p className="mt-4 text-pretty text-muted-foreground">
-            {typeInfo.tip}
+            {t(tipKey as any)}
           </p>
 
           {/* Concerns */}
           <div className="mt-6">
-            <p className="text-sm font-medium text-foreground">Key Findings</p>
+            <p className="text-sm font-medium text-foreground">{t('results.keyFindings')}</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {concerns.map((concern, index) => (
                 <span
@@ -287,7 +162,7 @@ export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProp
       {/* Recommendations */}
       <div className="mt-8 px-6">
         <h3 className="text-lg font-semibold text-foreground">
-          Skincare Tips
+          {t('results.tips')}
         </h3>
         <div className="mt-4 space-y-3">
           {recommendations.map((rec, index) => (
@@ -308,16 +183,16 @@ export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProp
       <div className="mt-8">
         <div className="flex items-center justify-between px-6">
           <h3 className="text-lg font-semibold text-foreground">
-            Recommended Products
+            {t('results.products')}
           </h3>
           <Button variant="link" className="text-primary">
-            See all <ChevronRight className="ml-1 h-4 w-4" />
+            {t('results.seeAll')} <ChevronRight className="ml-1 h-4 w-4" />
           </Button>
         </div>
 
         <div className="mt-4 flex gap-4 overflow-x-auto px-6 pb-4">
           {products.map((product, index) => (
-            <ProductCard key={index} product={product} />
+            <ProductCard key={index} product={product} addLabel={t('results.addToRoutine')} />
           ))}
         </div>
       </div>
@@ -325,17 +200,11 @@ export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProp
       {/* Daily Routine */}
       <div className="mt-8 px-6">
         <h3 className="text-lg font-semibold text-foreground">
-          Your Daily Routine
+          {t('results.routine.title')}
         </h3>
         <div className="mt-4 grid grid-cols-2 gap-4">
-          <RoutineCard
-            title="Morning"
-            steps={["Cleanser", "Serum", "Moisturizer", "Sunscreen"]}
-          />
-          <RoutineCard
-            title="Evening"
-            steps={["Cleanser", "Treatment", "Serum", "Moisturizer"]}
-          />
+          <RoutineCard title={t('results.routine.morning')} steps={routineSteps.morning} />
+          <RoutineCard title={t('results.routine.evening')} steps={routineSteps.evening} />
         </div>
       </div>
 
@@ -348,14 +217,14 @@ export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProp
           className="w-full rounded-full"
         >
           <RefreshCw className="mr-2 h-4 w-4" />
-          Start New Analysis
+          {t('results.restart')}
         </Button>
       </div>
     </div>
   )
 }
 
-function ProductCard({ product }: { product: Product }) {
+function ProductCard({ product, addLabel }: { product: Product; addLabel: string }) {
   return (
     <Card className="min-w-[160px] shrink-0 overflow-hidden rounded-xl">
       <div className="flex h-24 items-center justify-center bg-secondary">

@@ -3,6 +3,7 @@
 import { useRef, useState, useCallback, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Camera, RotateCcw, Check, SwitchCamera } from "lucide-react"
+import { useI18n } from '@/lib/i18n'
 
 interface CameraCaptureProps {
   onCapture: (imageData: string) => void
@@ -10,6 +11,7 @@ interface CameraCaptureProps {
 }
 
 export default function CameraCapture({ onCapture, onBack }: CameraCaptureProps) {
+  const { t } = useI18n()
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [stream, setStream] = useState<MediaStream | null>(null)
@@ -21,9 +23,8 @@ export default function CameraCapture({ onCapture, onBack }: CameraCaptureProps)
   const startCamera = useCallback(async () => {
     setIsLoading(true)
     setError(null)
-    
+
     try {
-      // Stop existing stream if any
       if (stream) {
         stream.getTracks().forEach((track) => track.stop())
       }
@@ -43,11 +44,11 @@ export default function CameraCapture({ onCapture, onBack }: CameraCaptureProps)
       }
     } catch (err) {
       console.error("Camera error:", err)
-      setError("Unable to access camera. Please grant camera permissions.")
+      setError(t('camera.error'))
     } finally {
       setIsLoading(false)
     }
-  }, [facingMode, stream])
+  }, [facingMode, stream, t])
 
   useEffect(() => {
     startCamera()
@@ -70,7 +71,6 @@ export default function CameraCapture({ onCapture, onBack }: CameraCaptureProps)
       canvas.height = video.videoHeight
 
       if (context) {
-        // Mirror the image if using front camera
         if (facingMode === "user") {
           context.translate(canvas.width, 0)
           context.scale(-1, 1)
@@ -88,7 +88,6 @@ export default function CameraCapture({ onCapture, onBack }: CameraCaptureProps)
 
   const handleConfirm = () => {
     if (capturedImage) {
-      // Stop camera before navigating
       if (stream) {
         stream.getTracks().forEach((track) => track.stop())
       }
@@ -112,7 +111,7 @@ export default function CameraCapture({ onCapture, onBack }: CameraCaptureProps)
         >
           <ArrowLeft className="h-6 w-6" />
         </Button>
-        <h1 className="text-lg font-medium text-background">Take a Photo</h1>
+        <h1 className="text-lg font-medium text-background">{t('camera.title')}</h1>
         <Button
           variant="ghost"
           size="icon"
@@ -129,7 +128,7 @@ export default function CameraCapture({ onCapture, onBack }: CameraCaptureProps)
           <div className="px-6 text-center text-background">
             <p className="mb-4">{error}</p>
             <Button onClick={startCamera} variant="secondary">
-              Retry
+              {t('camera.retry')}
             </Button>
           </div>
         ) : (
@@ -159,11 +158,9 @@ export default function CameraCapture({ onCapture, onBack }: CameraCaptureProps)
               />
             )}
 
-            {/* Face Guide Overlay */}
             {!capturedImage && !isLoading && (
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                 <div className="relative h-72 w-56">
-                  {/* Face outline */}
                   <svg
                     viewBox="0 0 200 260"
                     className="h-full w-full"
@@ -182,7 +179,7 @@ export default function CameraCapture({ onCapture, onBack }: CameraCaptureProps)
                   </svg>
                 </div>
                 <p className="absolute bottom-24 text-sm text-background/80">
-                  Position your face within the oval
+                  {t('camera.guide')}
                 </p>
               </div>
             )}

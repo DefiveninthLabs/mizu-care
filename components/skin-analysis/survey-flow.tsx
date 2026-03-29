@@ -3,78 +3,77 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, ArrowRight, Check } from "lucide-react"
+import { useI18n } from '@/lib/i18n'
 
 interface SurveyFlowProps {
   onComplete: (answers: Record<string, string>) => void
 }
 
-type Question = {
-  id: string
-  question: string
-  options: { value: string; label: string; description?: string }[]
-  multiSelect?: boolean
-}
-
-const questions: Question[] = [
-  {
-    id: "oiliness",
-    question: "How does your skin feel a few hours after cleansing?",
-    options: [
-      { value: "very_oily", label: "Very Oily", description: "Shiny all over" },
-      { value: "oily", label: "Somewhat Oily", description: "Oily in T-zone" },
-      { value: "balanced", label: "Balanced", description: "Neither oily nor dry" },
-      { value: "dry", label: "A Bit Dry", description: "Feels tight in some areas" },
-      { value: "very_dry", label: "Very Dry", description: "Tight and flaky" },
-    ],
-  },
-  {
-    id: "sensitivity",
-    question: "How does your skin react to new products?",
-    options: [
-      { value: "very_sensitive", label: "Very Sensitive", description: "Burns or stings easily" },
-      { value: "sensitive", label: "Somewhat Sensitive", description: "Occasional reactions" },
-      { value: "not_sensitive", label: "Not Sensitive", description: "Rarely reacts" },
-    ],
-  },
-  {
-    id: "hydration",
-    question: "How would you describe your skin's hydration?",
-    options: [
-      { value: "very_dry", label: "Very Dehydrated", description: "Constantly needs moisture" },
-      { value: "dry", label: "Often Dry", description: "Needs regular moisturizing" },
-      { value: "normal", label: "Well Hydrated", description: "Moisture balanced" },
-      { value: "oily", label: "Overly Hydrated", description: "Can skip moisturizer" },
-    ],
-  },
-  {
-    id: "concerns",
-    question: "What are your main skin concerns?",
-    multiSelect: true,
-    options: [
-      { value: "acne", label: "Acne & Breakouts" },
-      { value: "aging", label: "Fine Lines & Wrinkles" },
-      { value: "dark_spots", label: "Dark Spots & Uneven Tone" },
-      { value: "redness", label: "Redness & Irritation" },
-      { value: "large_pores", label: "Large Pores" },
-      { value: "dullness", label: "Dullness & Lack of Glow" },
-    ],
-  },
-  {
-    id: "routine",
-    question: "What's your current skincare routine like?",
-    options: [
-      { value: "minimal", label: "Minimal", description: "Just cleanser and maybe moisturizer" },
-      { value: "basic", label: "Basic", description: "Cleanser, moisturizer, sunscreen" },
-      { value: "intermediate", label: "Intermediate", description: "Including serums and treatments" },
-      { value: "advanced", label: "Advanced", description: "Multiple products and steps" },
-    ],
-  },
-]
-
 export default function SurveyFlow({ onComplete }: SurveyFlowProps) {
+  const { t } = useI18n()
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
+
+  const questions = [
+    {
+      id: "oiliness",
+      question: t('survey.q1'),
+      multiSelect: false,
+      options: [
+        { value: "very_oily", label: t('survey.q1.veryOily'), description: t('survey.q1.veryOilyDesc') },
+        { value: "oily", label: t('survey.q1.oily'), description: t('survey.q1.oilyDesc') },
+        { value: "balanced", label: t('survey.q1.balanced'), description: t('survey.q1.balancedDesc') },
+        { value: "dry", label: t('survey.q1.dry'), description: t('survey.q1.dryDesc') },
+        { value: "very_dry", label: t('survey.q1.veryDry'), description: t('survey.q1.veryDryDesc') },
+      ],
+    },
+    {
+      id: "sensitivity",
+      question: t('survey.q2'),
+      multiSelect: false,
+      options: [
+        { value: "very_sensitive", label: t('survey.q2.verySensitive'), description: t('survey.q2.verySensitiveDesc') },
+        { value: "sensitive", label: t('survey.q2.sensitive'), description: t('survey.q2.sensitiveDesc') },
+        { value: "not_sensitive", label: t('survey.q2.notSensitive'), description: t('survey.q2.notSensitiveDesc') },
+      ],
+    },
+    {
+      id: "hydration",
+      question: t('survey.q3'),
+      multiSelect: false,
+      options: [
+        { value: "very_dry", label: t('survey.q3.veryDry'), description: t('survey.q3.veryDryDesc') },
+        { value: "dry", label: t('survey.q3.dry'), description: t('survey.q3.dryDesc') },
+        { value: "normal", label: t('survey.q3.normal'), description: t('survey.q3.normalDesc') },
+        { value: "oily", label: t('survey.q3.oily'), description: t('survey.q3.oilyDesc') },
+      ],
+    },
+    {
+      id: "concerns",
+      question: t('survey.q4'),
+      multiSelect: true,
+      options: [
+        { value: "acne", label: t('survey.q4.acne') },
+        { value: "aging", label: t('survey.q4.aging') },
+        { value: "dark_spots", label: t('survey.q4.darkSpots') },
+        { value: "redness", label: t('survey.q4.redness') },
+        { value: "large_pores", label: t('survey.q4.pores') },
+        { value: "dullness", label: t('survey.q4.dullness') },
+      ],
+    },
+    {
+      id: "routine",
+      question: t('survey.q5'),
+      multiSelect: false,
+      options: [
+        { value: "minimal", label: t('survey.q5.minimal'), description: t('survey.q5.minimalDesc') },
+        { value: "basic", label: t('survey.q5.basic'), description: t('survey.q5.basicDesc') },
+        { value: "intermediate", label: t('survey.q5.intermediate'), description: t('survey.q5.intermediateDesc') },
+        { value: "advanced", label: t('survey.q5.advanced'), description: t('survey.q5.advancedDesc') },
+      ],
+    },
+  ]
 
   const question = questions[currentQuestion]
   const progress = ((currentQuestion + 1) / questions.length) * 100
@@ -88,7 +87,6 @@ export default function SurveyFlow({ onComplete }: SurveyFlowProps) {
       )
     } else {
       setAnswers((prev) => ({ ...prev, [question.id]: value }))
-      // Auto advance after brief delay
       setTimeout(() => {
         if (currentQuestion < questions.length - 1) {
           setCurrentQuestion((prev) => prev + 1)
@@ -151,9 +149,9 @@ export default function SurveyFlow({ onComplete }: SurveyFlowProps) {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <span className="text-sm text-muted-foreground">
-          {currentQuestion + 1} of {questions.length}
+          {currentQuestion + 1} {t('common.of')} {questions.length}
         </span>
-        <div className="w-10" /> {/* Spacer */}
+        <div className="w-10" />
       </div>
 
       {/* Question */}
@@ -163,7 +161,7 @@ export default function SurveyFlow({ onComplete }: SurveyFlowProps) {
         </h2>
         {question.multiSelect && (
           <p className="mt-2 text-sm text-muted-foreground">
-            Select all that apply
+            {t('survey.multiSelectHint')}
           </p>
         )}
 
@@ -186,7 +184,7 @@ export default function SurveyFlow({ onComplete }: SurveyFlowProps) {
               >
                 <div>
                   <p className="font-medium text-foreground">{option.label}</p>
-                  {option.description && (
+                  {'description' in option && option.description && (
                     <p className="mt-0.5 text-sm text-muted-foreground">
                       {option.description}
                     </p>
@@ -218,12 +216,12 @@ export default function SurveyFlow({ onComplete }: SurveyFlowProps) {
           >
             {isLast ? (
               <>
-                See My Results
+                {t('survey.seeResults')}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </>
             ) : (
               <>
-                Continue
+                {t('common.continue')}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </>
             )}

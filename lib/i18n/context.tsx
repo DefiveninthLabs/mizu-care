@@ -1,8 +1,9 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { translations, TranslationKeys } from './translations'
 
-export type Locale = 'en' | 'uk' | 'es' | 'fr' | 'de'
+export type Locale = 'en' | 'ru' | 'kz'
 
 export interface LocaleInfo {
   code: Locale
@@ -12,11 +13,9 @@ export interface LocaleInfo {
 }
 
 export const locales: LocaleInfo[] = [
-  { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
-  { code: 'uk', name: 'Ukrainian', nativeName: 'Українська', flag: '🇺🇦' },
-  { code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
-  { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷' },
-  { code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
+  { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧' },
+  { code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺' },
+  { code: 'kz', name: 'Kazakh', nativeName: 'Қазақша', flag: '🇰🇿' },
 ]
 
 interface I18nContextType {
@@ -24,8 +23,7 @@ interface I18nContextType {
   setLocale: (locale: Locale) => void
   locales: LocaleInfo[]
   currentLocaleInfo: LocaleInfo
-  // Translation function placeholder - will be implemented later
-  t: (key: string, params?: Record<string, string>) => string
+  t: (key: keyof TranslationKeys, params?: Record<string, string>) => string
 }
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined)
@@ -36,7 +34,6 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>('en')
   const [isHydrated, setIsHydrated] = useState(false)
 
-  // Load locale from localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY) as Locale | null
     if (stored && locales.some(l => l.code === stored)) {
@@ -45,7 +42,6 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     setIsHydrated(true)
   }, [])
 
-  // Save locale to localStorage when it changes
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale)
     localStorage.setItem(STORAGE_KEY, newLocale)
@@ -53,9 +49,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const currentLocaleInfo = locales.find(l => l.code === locale) || locales[0]
 
-  // Placeholder translation function - returns the key for now
-  const t = (key: string, params?: Record<string, string>): string => {
-    let result = key
+  const t = (key: keyof TranslationKeys, params?: Record<string, string>): string => {
+    let result: string = translations[locale][key] ?? translations['en'][key] ?? key
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
         result = result.replace(`{${k}}`, v)
@@ -64,7 +59,6 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     return result
   }
 
-  // Prevent hydration mismatch by not rendering until client-side hydration is complete
   if (!isHydrated) {
     return null
   }

@@ -318,20 +318,6 @@ export default function AdminPage() {
               <div className="text-2xl font-bold">{brands?.length || 0}</div>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Avg. Price
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                ${products && products.length > 0 
-                  ? (products.reduce((sum, p) => sum + p.price, 0) / products.length).toFixed(2)
-                  : '0.00'}
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Products Table */}
@@ -379,7 +365,7 @@ export default function AdminPage() {
                           </span>
                         </TableCell>
                         <TableCell className="text-right font-medium">
-                          ${product.price.toFixed(2)}
+                          ${product.price}
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-2">

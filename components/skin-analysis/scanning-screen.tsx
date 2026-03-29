@@ -1,33 +1,34 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useI18n } from '@/lib/i18n'
+import type { TranslationKeys } from '@/lib/i18n'
 
 interface ScanningScreenProps {
   image: string | null
   onComplete: () => void
 }
 
-const scanningSteps = [
-  "Analyzing skin texture...",
-  "Detecting pore size...",
-  "Measuring hydration levels...",
-  "Checking for blemishes...",
-  "Evaluating skin tone...",
-  "Processing results...",
-]
-
 export default function ScanningScreen({ image, onComplete }: ScanningScreenProps) {
+  const { t } = useI18n()
   const [currentStep, setCurrentStep] = useState(0)
   const [progress, setProgress] = useState(0)
   const [scanLinePosition, setScanLinePosition] = useState(0)
 
+  const scanningStepKeys: (keyof TranslationKeys)[] = [
+    'scanning.step.texture',
+    'scanning.step.pores',
+    'scanning.step.hydration',
+    'scanning.step.blemishes',
+    'scanning.step.tone',
+    'scanning.step.processing',
+  ]
+
   useEffect(() => {
-    // Animate scan line
     const scanInterval = setInterval(() => {
       setScanLinePosition((prev) => (prev >= 100 ? 0 : prev + 2))
     }, 50)
 
-    // Progress and steps
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -40,10 +41,9 @@ export default function ScanningScreen({ image, onComplete }: ScanningScreenProp
       })
     }, 60)
 
-    // Update current step
     const stepInterval = setInterval(() => {
       setCurrentStep((prev) =>
-        prev < scanningSteps.length - 1 ? prev + 1 : prev
+        prev < scanningStepKeys.length - 1 ? prev + 1 : prev
       )
     }, 1000)
 
@@ -59,10 +59,10 @@ export default function ScanningScreen({ image, onComplete }: ScanningScreenProp
       {/* Header */}
       <div className="text-center">
         <h1 className="text-2xl font-semibold text-background">
-          Analyzing Your Skin
+          {t('scanning.title')}
         </h1>
         <p className="mt-2 text-background/70">
-          Please wait while we process your photo
+          {t('scanning.subtitle')}
         </p>
       </div>
 
@@ -123,15 +123,13 @@ export default function ScanningScreen({ image, onComplete }: ScanningScreenProp
 
       {/* Progress Section */}
       <div className="mt-12 w-full max-w-sm">
-        {/* Current Step */}
         <div className="mb-4 flex items-center justify-center gap-2">
           <div className="h-2 w-2 animate-pulse rounded-full bg-primary" />
           <span className="text-sm text-background/80">
-            {scanningSteps[currentStep]}
+            {t(scanningStepKeys[currentStep])}
           </span>
         </div>
 
-        {/* Progress Bar */}
         <div className="h-2 overflow-hidden rounded-full bg-background/20">
           <div
             className="h-full rounded-full bg-primary transition-all duration-300 ease-out"
@@ -139,7 +137,6 @@ export default function ScanningScreen({ image, onComplete }: ScanningScreenProp
           />
         </div>
 
-        {/* Percentage */}
         <p className="mt-3 text-center text-2xl font-bold text-background">
           {progress}%
         </p>
@@ -148,18 +145,18 @@ export default function ScanningScreen({ image, onComplete }: ScanningScreenProp
       {/* Analysis Stats */}
       <div className="mt-8 grid w-full max-w-sm grid-cols-3 gap-4">
         <StatBox
-          label="Texture"
-          value={progress > 30 ? "Analyzed" : "Scanning"}
+          label={t('scanning.stat.texture')}
+          value={progress > 30 ? t('scanning.stat.analyzed') : t('scanning.stat.scanning')}
           active={progress <= 30}
         />
         <StatBox
-          label="Hydration"
-          value={progress > 60 ? "Analyzed" : "Scanning"}
+          label={t('scanning.stat.hydration')}
+          value={progress > 60 ? t('scanning.stat.analyzed') : t('scanning.stat.scanning')}
           active={progress > 30 && progress <= 60}
         />
         <StatBox
-          label="Tone"
-          value={progress > 90 ? "Analyzed" : "Scanning"}
+          label={t('scanning.stat.tone')}
+          value={progress > 90 ? t('scanning.stat.analyzed') : t('scanning.stat.scanning')}
           active={progress > 60 && progress <= 90}
         />
       </div>

@@ -17,6 +17,8 @@ import {
 import { Search, X, Package, ArrowLeft, Filter, ShoppingBag } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { useI18n } from "@/lib/i18n"
+import { LanguageSwitcher } from "@/components/language-switcher"
 
 interface Product {
   id: number
@@ -55,6 +57,7 @@ const typeColors: Record<string, string> = {
 }
 
 export default function ProductsPage() {
+  const { t } = useI18n()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedBrand, setSelectedBrand] = useState<string>("")
   const [selectedType, setSelectedType] = useState<string>("")
@@ -102,11 +105,14 @@ export default function ProductsPage() {
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
                 <Image src="/icon-white.png" alt="MizuCaire" className="w-6 h-6 object-contain" width={24} height={24} />
               </div>
-              <span className="text-xl font-bold text-foreground font-display">Products</span>
+              <span className="text-xl font-bold text-foreground font-display">{t('products.title')}</span>
             </div>
           </div>
-          <div className="text-sm text-muted-foreground">
-            {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground">
+              {filteredProducts.length} {filteredProducts.length === 1 ? t('products.product') : t('products.products')}
+            </span>
+            <LanguageSwitcher variant="minimal" />
           </div>
         </div>
       </nav>
@@ -119,7 +125,7 @@ export default function ProductsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search products by name, brand, or description..."
+              placeholder={t('products.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 pr-10 py-6 rounded-full bg-card border-border/50"
@@ -138,15 +144,15 @@ export default function ProductsPage() {
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Filter className="h-4 w-4" />
-              <span>Filters:</span>
+              <span>{t('products.filters')}</span>
             </div>
             
             <Select value={selectedBrand || "all"} onValueChange={(val) => setSelectedBrand(val === "all" ? "" : val)}>
               <SelectTrigger className="w-[160px] rounded-full">
-                <SelectValue placeholder="All Brands" />
+                <SelectValue placeholder={t('products.allBrands')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Brands</SelectItem>
+                <SelectItem value="all">{t('products.allBrands')}</SelectItem>
                 {brands?.map(brand => (
                   <SelectItem key={brand} value={brand}>{brand}</SelectItem>
                 ))}
@@ -155,10 +161,10 @@ export default function ProductsPage() {
             
             <Select value={selectedType || "all"} onValueChange={(val) => setSelectedType(val === "all" ? "" : val)}>
               <SelectTrigger className="w-[160px] rounded-full">
-                <SelectValue placeholder="All Types" />
+                <SelectValue placeholder={t('products.allTypes')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="all">{t('products.allTypes')}</SelectItem>
                 {types?.map(type => (
                   <SelectItem key={type} value={type}>{type}</SelectItem>
                 ))}
@@ -173,7 +179,7 @@ export default function ProductsPage() {
                 className="rounded-full text-muted-foreground hover:text-foreground"
               >
                 <X className="h-4 w-4 mr-1" />
-                Clear all
+                {t('products.clearAll')}
               </Button>
             )}
           </div>
@@ -183,7 +189,7 @@ export default function ProductsPage() {
             <div className="flex flex-wrap gap-2">
               {searchQuery && (
                 <Badge variant="secondary" className="rounded-full px-3 py-1">
-                  Search: "{searchQuery}"
+                  {t('products.searchLabel')} &quot;{searchQuery}&quot;
                   <button onClick={() => setSearchQuery("")} className="ml-2 hover:text-foreground">
                     <X className="h-3 w-3" />
                   </button>
@@ -191,7 +197,7 @@ export default function ProductsPage() {
               )}
               {selectedBrand && (
                 <Badge variant="secondary" className="rounded-full px-3 py-1">
-                  Brand: {selectedBrand}
+                  {t('products.brandLabel')} {selectedBrand}
                   <button onClick={() => setSelectedBrand("")} className="ml-2 hover:text-foreground">
                     <X className="h-3 w-3" />
                   </button>
@@ -199,7 +205,7 @@ export default function ProductsPage() {
               )}
               {selectedType && (
                 <Badge variant="secondary" className="rounded-full px-3 py-1">
-                  Type: {selectedType}
+                  {t('products.typeLabel')} {selectedType}
                   <button onClick={() => setSelectedType("")} className="ml-2 hover:text-foreground">
                     <X className="h-3 w-3" />
                   </button>
@@ -270,10 +276,10 @@ export default function ProductsPage() {
                     </div>
                     <div className="flex items-center justify-between mt-auto pt-3 border-t border-border/50">
                       <span className="text-lg font-bold text-foreground">
-                        ${product.price.toFixed(2)}
+                        ${product.price}
                       </span>
                       <Button size="sm" variant="secondary" className="rounded-full">
-                        Add to Routine
+                        {t('products.addToRoutine')}
                       </Button>
                     </div>
                   </CardContent>
@@ -284,15 +290,15 @@ export default function ProductsPage() {
         ) : (
           <div className="text-center py-16">
             <Package className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
-            <h3 className="text-xl font-semibold text-foreground mb-2">No products found</h3>
+            <h3 className="text-xl font-semibold text-foreground mb-2">{t('products.noProducts')}</h3>
             <p className="text-muted-foreground mb-4">
-              {hasActiveFilters 
-                ? "Try adjusting your filters or search query"
-                : "No products have been added yet"}
+              {hasActiveFilters
+                ? t('products.noProductsFiltered')
+                : t('products.noProducts')}
             </p>
             {hasActiveFilters && (
               <Button variant="outline" onClick={clearFilters} className="rounded-full">
-                Clear all filters
+                {t('products.clearFilters')}
               </Button>
             )}
           </div>

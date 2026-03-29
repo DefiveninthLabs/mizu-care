@@ -3,35 +3,37 @@
 import { Button } from "@/components/ui/button"
 import { Camera, ClipboardList, Award } from "lucide-react"
 import Image from 'next/image'
+import { useI18n } from '@/lib/i18n'
 
 interface WelcomeScreenProps {
   onStart: () => void
 }
 
 export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
+  const { t } = useI18n()
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-between px-6 py-12">
       {/* Header */}
       <div className="flex flex-col items-center text-center">
         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary">
-          <Image alt='l' src={'/icon-white.png'} width={50} height={50} />
+          <Image alt="MizuCaire" src={'/icon-white.png'} width={50} height={50} />
         </div>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
           MizuCaire
         </h1>
         <p className="mt-2 text-muted-foreground">
-          AI-Powered Skin Analysis
+          {t('welcome.tagline')}
         </p>
       </div>
 
       {/* Hero Section */}
       <div className="flex flex-col items-center text-center">
         <h2 className="text-balance text-2xl font-semibold text-foreground">
-          Discover Your Perfect Skincare Routine
+          {t('welcome.title')}
         </h2>
         <p className="mt-4 max-w-sm text-pretty text-muted-foreground">
-          Take a quick photo and answer a few questions to get personalized
-          skincare recommendations tailored just for you.
+          {t('welcome.subtitle')}
         </p>
       </div>
 
@@ -39,18 +41,18 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
       <div className="w-full max-w-sm space-y-3">
         <FeatureItem
           icon={<Camera className="h-5 w-5" />}
-          title="Face Scan"
-          description="Quick AI analysis of your skin"
+          title={t('welcome.feature.scan')}
+          description={t('welcome.feature.scanDesc')}
         />
         <FeatureItem
           icon={<ClipboardList className="h-5 w-5" />}
-          title="Smart Survey"
-          description="Understand your skin concerns"
+          title={t('welcome.feature.survey')}
+          description={t('welcome.feature.surveyDesc')}
         />
         <FeatureItem
           icon={<Award className="h-5 w-5" />}
-          title="Personalized Results"
-          description="Get tailored product recommendations"
+          title={t('welcome.feature.results')}
+          description={t('welcome.feature.resultsDesc')}
         />
       </div>
 
@@ -61,10 +63,10 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           size="lg"
           className="w-full rounded-full py-6 text-lg font-medium"
         >
-          Start Analysis
+          {t('welcome.cta')}
         </Button>
         <p className="mt-4 text-center text-xs text-muted-foreground">
-          Your photos are processed locally and never stored
+          {t('welcome.privacy')}
         </p>
       </div>
     </div>
