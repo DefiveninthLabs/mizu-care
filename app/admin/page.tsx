@@ -242,14 +242,14 @@ export default function AdminPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="price">Price ($)</Label>
+                      <Label htmlFor="price">Price (₸)</Label>
                       <Input
                         id="price"
                         type="number"
-                        step="0.01"
+                        step="1"
                         value={formData.price}
                         onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                        placeholder="29.99"
+                        placeholder="12 990"
                         required
                       />
                     </div>
@@ -316,7 +316,7 @@ export default function AdminPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -335,20 +335,6 @@ export default function AdminPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{brands?.length || 0}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t('admin.avgPrice')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                ${products && products.length > 0 
-                  ? (products.reduce((sum, p) => sum + p.price, 0) / products.length)
-                  : '0.00'}
-              </div>
             </CardContent>
           </Card>
         </div>
@@ -408,7 +394,7 @@ export default function AdminPage() {
                           )}
                         </TableCell>
                         <TableCell className="text-right font-medium">
-                          ${product.price}
+                          {Number(product.price).toLocaleString('ru-KZ')} ₸
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-2">

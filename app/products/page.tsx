@@ -287,7 +287,7 @@ export default function ProductsPage() {
                       </div>
                       <div className="flex items-center justify-between mt-auto pt-3 border-t border-border/50">
                         <span className="text-lg font-bold text-foreground">
-                          ${product.price}
+                          {Number(product.price).toLocaleString('ru-KZ')} ₸
                         </span>
                         <Button size="sm" variant="secondary" className="rounded-full" onClick={(e) => e.preventDefault()}>
                           {t('products.addToRoutine')}

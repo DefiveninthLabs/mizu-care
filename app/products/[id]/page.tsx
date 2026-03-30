@@ -103,7 +103,7 @@ export default function ProductDetailPage() {
               {product.name}
             </span>
           </div>
-          <span className="text-lg font-bold text-foreground">${product.price}</span>
+          <span className="text-lg font-bold text-foreground">{Number(product.price).toLocaleString('ru-KZ')} ₸</span>
         </div>
       </nav>
 
@@ -144,7 +144,7 @@ export default function ProductDetailPage() {
               {product.name}
             </h1>
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="text-2xl font-bold text-foreground">${product.price}</span>
+              <span className="text-2xl font-bold text-foreground">{Number(product.price).toLocaleString('ru-KZ')} ₸</span>
               <Badge variant="outline" className="rounded-full">
                 <Tag className="h-3 w-3 mr-1" />
                 {product.brand}
