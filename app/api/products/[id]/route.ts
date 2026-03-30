@@ -27,7 +27,7 @@ export async function PUT(
   try {
     const { id } = await params
     const body = await request.json()
-    const { name, description, price, brand, type, image_url } = body
+    const { name, description, usage_tip, price, brand, type, image_url } = body
 
     if (!name || price === undefined || !brand || !type) {
       return NextResponse.json(
@@ -39,6 +39,7 @@ export async function PUT(
     const updatedProduct = await productDb.update(parseInt(id), {
       name,
       description,
+      usage_tip,
       price: parseFloat(price),
       brand,
       type,

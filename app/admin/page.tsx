@@ -318,6 +318,20 @@ export default function AdminPage() {
               <div className="text-2xl font-bold">{brands?.length || 0}</div>
             </CardContent>
           </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Avg. Price
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                ${products && products.length > 0 
+                  ? (products.reduce((sum, p) => sum + p.price, 0) / products.length)
+                  : '0.00'}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Products Table */}

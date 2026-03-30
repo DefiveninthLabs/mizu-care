@@ -6,6 +6,7 @@ export interface Product {
   id: number
   name: string
   description: string | null
+  usage_tip: string | null
   price: number
   brand: string
   type: string
@@ -17,6 +18,7 @@ export interface Product {
 export interface CreateProductInput {
   name: string
   description?: string | null
+  usage_tip?: string | null
   price: number
   brand: string
   type: string
@@ -92,8 +94,8 @@ export const productDb = {
 
   async create(product: CreateProductInput): Promise<Product> {
     const rows = await sql`
-      INSERT INTO products (name, description, price, brand, type, image_url)
-      VALUES (${product.name}, ${product.description ?? null}, ${product.price}, ${product.brand}, ${product.type}, ${product.image_url ?? null})
+      INSERT INTO products (name, description, usage_tip, price, brand, type, image_url)
+      VALUES (${product.name}, ${product.description ?? null}, ${product.usage_tip ?? null}, ${product.price}, ${product.brand}, ${product.type}, ${product.image_url ?? null})
       RETURNING *
     ` as Product[]
     return rows[0]
@@ -104,6 +106,7 @@ export const productDb = {
       UPDATE products
       SET name = ${product.name},
           description = ${product.description ?? null},
+          usage_tip = ${product.usage_tip ?? null},
           price = ${product.price},
           brand = ${product.brand},
           type = ${product.type},

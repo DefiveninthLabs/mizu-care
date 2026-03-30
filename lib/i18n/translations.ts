@@ -193,6 +193,14 @@ export type TranslationKeys = {
   'products.product': string
   'products.products': string
   'products.addToRoutine': string
+  'products.usageTip': string
+  'products.viewDetails': string
+  // Product detail page
+  'product.back': string
+  'product.usageTip': string
+  'product.description': string
+  'product.addToRoutine': string
+  'product.notFound': string
 
   // Admin page
   'admin.title': string
@@ -389,6 +397,13 @@ export const translations: Record<Locale, TranslationKeys> = {
     'products.product': 'product',
     'products.products': 'products',
     'products.addToRoutine': 'Add to Routine',
+    'products.usageTip': 'How to Use',
+    'products.viewDetails': 'View Details',
+    'product.back': 'Back to Products',
+    'product.usageTip': 'How to Use',
+    'product.description': 'About This Product',
+    'product.addToRoutine': 'Add to Routine',
+    'product.notFound': 'Product not found',
 
     'admin.title': 'Admin',
     'admin.addProduct': 'Add Product',
@@ -419,7 +434,7 @@ export const translations: Record<Locale, TranslationKeys> = {
     'nav.products': 'Продукты',
     'nav.science': 'Наука',
     'nav.reviews': 'Отзывы',
-    'nav.admin': 'Администратор',
+    'nav.admin': 'Адм��нистратор',
     'nav.tryScan': 'Сканировать',
 
     'home.badge': 'ИИ-анализ кожи за 2 минуты',
@@ -471,7 +486,7 @@ export const translations: Record<Locale, TranslationKeys> = {
 
     'welcome.tagline': 'Анализ кожи на основе ИИ',
     'welcome.title': 'Откройте для себя идеальный уход за кожей',
-    'welcome.subtitle': 'Сделайте быстрое фото и ответьте на несколько вопросов, чтобы получить персональные рекомендации по уходу за кожей.',
+    'welcome.subtitle': 'Сделайте быстрое фото и ответь��е на несколько вопросов, чтобы получить персональные рекомендации по уходу за кожей.',
     'welcome.feature.scan': 'Сканирование лица',
     'welcome.feature.scanDesc': 'Быстрый ИИ-анализ вашей кожи',
     'welcome.feature.survey': 'Умный опрос',
