@@ -72,7 +72,7 @@ function AiChatPage() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/products")
+    fetch("api/products")
       .then((r) => r.json())
       .then((data) => setProducts(Array.isArray(data) ? data : data.products ?? []))
       .catch(() => {});
