@@ -1,14 +1,17 @@
 "use client"
 
 import { useParams, useRouter } from "next/navigation"
+import { useState } from "react"
 import useSWR from "swr"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
-import { ArrowLeft, ShoppingBag, Lightbulb, Tag, Info } from "lucide-react"
+import { ArrowLeft, ShoppingBag, Lightbulb, Tag, Info, Check } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 import { useI18n } from "@/lib/i18n"
+import { addToBasket } from "@/lib/basket"
 
 interface Product {
   id: number
@@ -42,6 +45,7 @@ export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
   const { t } = useI18n()
+  const [added, setAdded] = useState(false)
 
   const { data: product, isLoading, error } = useSWR<Product>(
     id ? `/api/products/${id}` : null,
@@ -103,7 +107,14 @@ export default function ProductDetailPage() {
               {product.name}
             </span>
           </div>
-          <span className="text-lg font-bold text-foreground">{Number(product.price).toLocaleString('ru-KZ')} ₸</span>
+          <div className="flex items-center gap-2">
+            <Link href="/basket">
+              <Button variant="outline" size="sm" className="rounded-full">
+                Basket
+              </Button>
+            </Link>
+            <span className="text-lg font-bold text-foreground">{Number(product.price).toLocaleString('ru-KZ')} ₸</span>
+          </div>
         </div>
       </nav>
 
@@ -115,7 +126,7 @@ export default function ProductDetailPage() {
           className="space-y-8"
         >
           {/* Product Image */}
-          <div className="relative h-72 md:h-96 w-full rounded-2xl overflow-hidden bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
+          <div className="relative h-72 md:h-96 w-full rounded-2xl overflow-hidden bg-linear-to-br from-muted to-muted/50 flex items-center justify-center">
             {product.image_url ? (
               <Image
                 src={product.image_url}
@@ -185,8 +196,29 @@ export default function ProductDetailPage() {
 
           {/* CTA */}
           <div className="flex gap-3 pt-2">
-            <Button className="flex-1 rounded-full py-6 text-base font-semibold">
-              {t('product.addToRoutine')}
+            <Button
+              className="flex-1 rounded-full py-6 text-base font-semibold"
+              onClick={() => {
+                addToBasket({
+                  id: product.id,
+                  name: product.name,
+                  price: Number(product.price),
+                  brand: product.brand,
+                  type: product.type,
+                  image_url: product.image_url,
+                })
+                setAdded(true)
+                window.setTimeout(() => setAdded(false), 1500)
+              }}
+            >
+              {added ? (
+                <span className="inline-flex items-center gap-2">
+                  <Check className="h-4 w-4" />
+                  Added to basket
+                </span>
+              ) : (
+                t('product.addToRoutine')
+              )}
             </Button>
             <Button variant="outline" className="rounded-full py-6 px-6" onClick={() => router.back()}>
               <ArrowLeft className="h-4 w-4" />

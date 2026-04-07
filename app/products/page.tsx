@@ -113,6 +113,12 @@ export default function ProductsPage() {
             <span className="text-sm text-muted-foreground">
               {filteredProducts.length} {filteredProducts.length === 1 ? t('products.product') : t('products.products')}
             </span>
+            <Link href="/basket">
+              <Button variant="outline" size="sm" className="rounded-full">
+                <ShoppingBag className="h-4 w-4 mr-1" />
+                Basket
+              </Button>
+            </Link>
             <LanguageSwitcher variant="minimal" />
           </div>
         </div>
@@ -241,7 +247,7 @@ export default function ProductsPage() {
                 <Link href={`/products/${product.id}`} className="block h-full">
                   <Card className="p-0 group overflow-hidden border-border/50 hover:shadow-elevated hover:border-primary/30 transition-all duration-300 h-full flex flex-col cursor-pointer">
                     {/* Product Image */}
-                    <div className="relative h-64 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center overflow-hidden">
+                    <div className="relative h-64 bg-linear-to-br from-muted to-muted/50 flex items-center justify-center overflow-hidden">
                       {product.image_url ? (
                         <Image 
                           src={product.image_url} 
