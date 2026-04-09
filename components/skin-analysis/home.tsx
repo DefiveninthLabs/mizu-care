@@ -523,7 +523,6 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             <a href="#science" className="hover:text-foreground transition-colors">{t('nav.science')}</a>
             <a href="#reviews" className="hover:text-foreground transition-colors">{t('nav.reviews')}</a>
-            <Button onClick={onStart} className="hover:text-foreground transition-colors">{t('home.cta.button')}</Button>
           </div>
           <p className="text-sm text-muted-foreground">© 2026 MizuCaire. All rights reserved.</p>
         </div>
