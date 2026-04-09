@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react"
 import { useI18n } from '@/lib/i18n'
 import type { TranslationKeys } from '@/lib/i18n'
+import type { RecommendedProduct } from '@/app/page'
 
 interface AnalysisResult {
   skinType: string
@@ -16,6 +17,7 @@ interface AnalysisResult {
     elasticity: number
   }
   detailedNotes?: string
+  recommendedProducts?: RecommendedProduct[]
 }
 
 interface ScanningScreenProps {

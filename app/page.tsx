@@ -8,6 +8,16 @@ import ScanningScreen from "@/components/skin-analysis/scanning-screen"
 import SurveyFlow from "@/components/skin-analysis/survey-flow"
 import ResultsScreen from "@/components/skin-analysis/results-screen"
 
+export type RecommendedProduct = {
+  id: number
+  name: string
+  description: string | null
+  price: string
+  brand: string
+  type: string
+  image_url: string | null
+}
+
 export type SkinData = {
   image: string | null
   surveyAnswers: Record<string, string>
@@ -22,6 +32,7 @@ export type SkinData = {
     elasticity: number
   }
   detailedNotes?: string
+  recommendedProducts?: RecommendedProduct[]
 }
 
 export type AppScreen =
@@ -44,6 +55,7 @@ interface AnalysisResult {
     elasticity: number
   }
   detailedNotes?: string
+  recommendedProducts?: RecommendedProduct[]
 }
 
 export default function SkinAnalysisApp() {
@@ -83,6 +95,7 @@ export default function SkinAnalysisApp() {
         recommendations: analysisResult.recommendations,
         analysis: analysisResult.analysis,
         detailedNotes: analysisResult.detailedNotes,
+        recommendedProducts: analysisResult.recommendedProducts,
       }))
     } else {
       // Fallback to survey-based analysis

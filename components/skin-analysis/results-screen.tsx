@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import type { SkinData } from "@/app/page"
+import type { SkinData, RecommendedProduct } from "@/app/page"
 import {
   Droplets,
   Sun,
@@ -10,63 +10,31 @@ import {
   RefreshCw,
   Share2,
   ChevronRight,
-  Star,
   Zap,
   Layers,
+  ShoppingBag,
 } from "lucide-react"
 import { useI18n } from '@/lib/i18n'
+import Image from "next/image"
+import Link from "next/link"
 
 interface ResultsScreenProps {
   skinData: SkinData
   onRestart: () => void
 }
 
-type Product = {
-  name: string
-  brand: string
-  type: string
-  price: string
-  rating: number
-  image: string
-}
-
-const productRecommendations: Record<string, Product[]> = {
-  Oily: [
-    { name: "Oil-Free Gel Cleanser", brand: "CeraVe", type: "Cleanser", price: "$15", rating: 4.7, image: "/products/cleanser.jpg" },
-    { name: "Niacinamide 10% + Zinc 1%", brand: "The Ordinary", type: "Serum", price: "$6", rating: 4.5, image: "/products/serum.jpg" },
-    { name: "Ultra-Light Daily Moisturizer", brand: "Neutrogena", type: "Moisturizer", price: "$12", rating: 4.3, image: "/products/moisturizer.jpg" },
-    { name: "Clear Skin Sunscreen SPF 50", brand: "La Roche-Posay", type: "Sunscreen", price: "$35", rating: 4.8, image: "/products/sunscreen.jpg" },
-  ],
-  Dry: [
-    { name: "Hydrating Cream Cleanser", brand: "CeraVe", type: "Cleanser", price: "$16", rating: 4.8, image: "/products/cleanser.jpg" },
-    { name: "Hyaluronic Acid 2% + B5", brand: "The Ordinary", type: "Serum", price: "$8", rating: 4.6, image: "/products/serum.jpg" },
-    { name: "Moisturizing Cream", brand: "CeraVe", type: "Moisturizer", price: "$19", rating: 4.9, image: "/products/moisturizer.jpg" },
-    { name: "Cicaplast Baume B5", brand: "La Roche-Posay", type: "Treatment", price: "$16", rating: 4.7, image: "/products/treatment.jpg" },
-  ],
-  Combination: [
-    { name: "Gentle Foaming Cleanser", brand: "CeraVe", type: "Cleanser", price: "$15", rating: 4.6, image: "/products/cleanser.jpg" },
-    { name: "Alpha Arbutin 2% + HA", brand: "The Ordinary", type: "Serum", price: "$9", rating: 4.4, image: "/products/serum.jpg" },
-    { name: "PM Facial Moisturizing Lotion", brand: "CeraVe", type: "Moisturizer", price: "$14", rating: 4.7, image: "/products/moisturizer.jpg" },
-    { name: "Anthelios Mineral SPF 50", brand: "La Roche-Posay", type: "Sunscreen", price: "$34", rating: 4.5, image: "/products/sunscreen.jpg" },
-  ],
-  Sensitive: [
-    { name: "Toleriane Dermo-Cleanser", brand: "La Roche-Posay", type: "Cleanser", price: "$26", rating: 4.8, image: "/products/cleanser.jpg" },
-    { name: "Centella Sensitive Serum", brand: "COSRX", type: "Serum", price: "$24", rating: 4.5, image: "/products/serum.jpg" },
-    { name: "Toleriane Ultra Cream", brand: "La Roche-Posay", type: "Moisturizer", price: "$32", rating: 4.9, image: "/products/moisturizer.jpg" },
-    { name: "Mineral Sunscreen SPF 50", brand: "EltaMD", type: "Sunscreen", price: "$41", rating: 4.8, image: "/products/sunscreen.jpg" },
-  ],
-  Normal: [
-    { name: "Hydrating Facial Cleanser", brand: "CeraVe", type: "Cleanser", price: "$15", rating: 4.7, image: "/products/cleanser.jpg" },
-    { name: "Vitamin C Suspension 23%", brand: "The Ordinary", type: "Serum", price: "$6", rating: 4.3, image: "/products/serum.jpg" },
-    { name: "Daily Moisturizing Lotion", brand: "CeraVe", type: "Moisturizer", price: "$14", rating: 4.8, image: "/products/moisturizer.jpg" },
-    { name: "UV Clear SPF 46", brand: "EltaMD", type: "Sunscreen", price: "$39", rating: 4.7, image: "/products/sunscreen.jpg" },
-  ],
+// Format price from "10990.00" to "10 990 ₸"
+function formatPrice(price: string): string {
+  const num = parseFloat(price)
+  if (isNaN(num)) return price
+  // Format with space as thousands separator and tenge symbol
+  const formatted = Math.round(num).toLocaleString('ru-KZ').replace(/,/g, ' ')
+  return `${formatted} ₸`
 }
 
 export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProps) {
   const { t } = useI18n()
-  const { skinType, concerns, recommendations, analysis, detailedNotes } = skinData
-  const products = productRecommendations[skinType] || productRecommendations.Normal
+  const { skinType, concerns, recommendations, analysis, detailedNotes, recommendedProducts } = skinData
 
   const skinTypeColors: Record<string, string> = {
     Oily: "bg-primary/10 text-primary",
@@ -247,23 +215,27 @@ export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProp
         </div>
       </div>
 
-      {/* Product Recommendations */}
-      <div className="mt-8">
-        <div className="flex items-center justify-between px-6">
-          <h3 className="text-lg font-semibold text-foreground">
-            {t('results.products')}
-          </h3>
-          <Button variant="link" className="text-primary">
-            {t('results.seeAll')} <ChevronRight className="ml-1 h-4 w-4" />
-          </Button>
-        </div>
+      {/* Product Recommendations from DB */}
+      {recommendedProducts && recommendedProducts.length > 0 && (
+        <div className="mt-8">
+          <div className="flex items-center justify-between px-6">
+            <h3 className="text-lg font-semibold text-foreground">
+              {t('results.products')}
+            </h3>
+            <Link href="/products">
+              <Button variant="link" className="text-primary">
+                {t('results.seeAll')} <ChevronRight className="ml-1 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
 
-        <div className="mt-4 flex gap-4 overflow-x-auto px-6 pb-4">
-          {products.map((product, index) => (
-            <ProductCard key={index} product={product} addLabel={t('results.addToRoutine')} />
-          ))}
+          <div className="mt-4 flex gap-4 overflow-x-auto px-6 pb-4">
+            {recommendedProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Daily Routine */}
       <div className="mt-8 px-6">
@@ -332,26 +304,39 @@ function MetricBar({
   )
 }
 
-function ProductCard({ product, addLabel }: { product: Product; addLabel: string }) {
+function ProductCard({ product }: { product: RecommendedProduct }) {
   return (
-    <Card className="min-w-[160px] shrink-0 overflow-hidden rounded-xl">
-      <div className="flex h-24 items-center justify-center bg-secondary">
-        <Sparkles className="h-8 w-8 text-muted-foreground" />
-      </div>
-      <div className="p-3">
-        <p className="text-xs text-muted-foreground">{product.brand}</p>
-        <p className="mt-0.5 line-clamp-2 text-sm font-medium text-foreground">
-          {product.name}
-        </p>
-        <div className="mt-2 flex items-center justify-between">
-          <span className="font-semibold text-foreground">{product.price}</span>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-            {product.rating}
+    <Link href={`/products/${product.id}`}>
+      <Card className="min-w-[180px] max-w-[180px] shrink-0 overflow-hidden rounded-xl hover:shadow-md transition-shadow cursor-pointer">
+        <div className="relative h-28 w-full bg-secondary">
+          {product.image_url ? (
+            <Image
+              src={product.image_url}
+              alt={product.name}
+              fill
+              className="object-contain p-2"
+              sizes="180px"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <ShoppingBag className="h-10 w-10 text-muted-foreground/50" />
+            </div>
+          )}
+        </div>
+        <div className="p-3">
+          <p className="text-xs text-muted-foreground">{product.brand}</p>
+          <p className="mt-0.5 line-clamp-2 text-sm font-medium text-foreground min-h-[2.5rem]">
+            {product.name}
+          </p>
+          <div className="mt-2 flex items-center justify-between">
+            <span className="font-semibold text-foreground">{formatPrice(product.price)}</span>
+            <span className="text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded">
+              {product.type}
+            </span>
           </div>
         </div>
-      </div>
-    </Card>
+      </Card>
+    </Link>
   )
 }
 

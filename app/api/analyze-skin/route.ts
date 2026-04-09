@@ -1,5 +1,6 @@
 import { generateText, Output } from "ai"
 import { z } from "zod"
+import { productDb, type Product } from "@/lib/db"
 
 const skinAnalysisSchema = z.object({
   skinType: z.enum(["Oily", "Dry", "Combination", "Sensitive", "Normal"]),
@@ -13,11 +14,41 @@ const skinAnalysisSchema = z.object({
     elasticity: z.number().min(0).max(100),
   }),
   detailedNotes: z.string(),
+  recommendedProductIds: z.array(z.number()).min(0).max(6),
 })
+
+// Minimal product info for AI (no image_url, timestamps)
+type MinimalProduct = {
+  id: number
+  name: string
+  brand: string
+  type: string
+  description: string | null
+}
+
+function getMinimalProducts(products: Product[]): MinimalProduct[] {
+  return products.map(p => ({
+    id: p.id,
+    name: p.name,
+    brand: p.brand,
+    type: p.type,
+    description: p.description,
+  }))
+}
 
 export async function POST(req: Request) {
   try {
     const { imageData, surveyAnswers } = await req.json()
+
+    // Fetch all products from DB
+    let allProducts: Product[] = []
+    try {
+      allProducts = await productDb.getAll()
+    } catch (dbErr) {
+      console.error("Failed to fetch products:", dbErr)
+    }
+
+    const minimalProducts = getMinimalProducts(allProducts)
 
     if (!imageData) {
       return Response.json(
@@ -37,6 +68,11 @@ export async function POST(req: Request) {
     
     const mediaType = `image/${base64Match[1]}` as "image/jpeg" | "image/png" | "image/gif" | "image/webp"
     const base64Data = base64Match[2]
+
+    const productListForAI = minimalProducts.length > 0 
+      ? `\n\nAvailable products in our database (select the most suitable ones by their ID):
+${JSON.stringify(minimalProducts, null, 0)}`
+      : ""
 
     const prompt = `You are an expert dermatologist AI. Analyze this facial skin image and provide a detailed skin analysis.
 
@@ -62,10 +98,12 @@ For analysis scores (0-100): Rate each metric based on what you observe:
 - clarity: Clearness and absence of blemishes
 - elasticity: Skin firmness and youthful appearance
 
-For detailedNotes: A brief 1-2 sentence summary of the skin condition observed.`
+For detailedNotes: A brief 1-2 sentence summary of the skin condition observed.
+
+For recommendedProductIds: Select up to 6 product IDs from our database that would be most beneficial for this skin type and concerns. Choose products that address the specific issues you identified.${productListForAI}`
 
     const { output } = await generateText({
-      model: "google/gemini-3-flash",
+      model: "google/gemini-2.5-flash-preview-04-17",
       output: Output.object({
         schema: skinAnalysisSchema,
       }),
@@ -88,26 +126,40 @@ For detailedNotes: A brief 1-2 sentence summary of the skin condition observed.`
     })
 
     if (!output) {
-      // Return fallback if AI doesn't return structured output
-      return Response.json(getFallbackAnalysis(surveyAnswers))
+      return Response.json(getFallbackAnalysis(surveyAnswers, allProducts))
     }
 
-    return Response.json(output)
+    // Get full product details for recommended IDs
+    const recommendedProducts = output.recommendedProductIds
+      .map(id => allProducts.find(p => p.id === id))
+      .filter((p): p is Product => p !== undefined)
+
+    return Response.json({
+      ...output,
+      recommendedProducts,
+    })
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : "Unknown error"
     console.error("Skin analysis error:", errorMessage)
     
     // Try to extract survey answers for fallback
+    let allProducts: Product[] = []
+    try {
+      allProducts = await productDb.getAll()
+    } catch {
+      // Ignore DB error in fallback
+    }
+
     try {
       const { surveyAnswers } = await req.clone().json()
-      return Response.json(getFallbackAnalysis(surveyAnswers || {}))
+      return Response.json(getFallbackAnalysis(surveyAnswers || {}, allProducts))
     } catch {
-      return Response.json(getFallbackAnalysis({}))
+      return Response.json(getFallbackAnalysis({}, allProducts))
     }
   }
 }
 
-function getFallbackAnalysis(surveyAnswers: Record<string, string>) {
+function getFallbackAnalysis(surveyAnswers: Record<string, string>, products: Product[]) {
   const oiliness = surveyAnswers?.oiliness || "balanced"
   const sensitivity = surveyAnswers?.sensitivity || "not_sensitive"
   const hydration = surveyAnswers?.hydration || "normal"
@@ -115,7 +167,6 @@ function getFallbackAnalysis(surveyAnswers: Record<string, string>) {
 
   let skinType: "Oily" | "Dry" | "Combination" | "Sensitive" | "Normal" = "Normal"
   const skinConcerns: string[] = []
-  const recommendations: string[] = []
 
   if (oiliness === "very_oily" || oiliness === "oily") {
     if (hydration === "dry" || hydration === "very_dry") {
@@ -181,11 +232,38 @@ function getFallbackAnalysis(surveyAnswers: Record<string, string>) {
     Normal: { hydration: 75, oiliness: 50, texture: 80, clarity: 80, elasticity: 78 },
   }
 
+  // Fallback: pick random products based on skin type keywords
+  const typeKeywords: Record<string, string[]> = {
+    Oily: ["Cleanser", "Toner", "Serum"],
+    Dry: ["Moisturizer", "Cream", "Oil", "Serum"],
+    Combination: ["Cleanser", "Moisturizer", "Serum"],
+    Sensitive: ["Cream", "Serum", "Moisturizer"],
+    Normal: ["Serum", "Moisturizer", "Sunscreen"],
+  }
+
+  const keywords = typeKeywords[skinType] || typeKeywords.Normal
+  const recommendedProducts = products
+    .filter(p => keywords.some(k => 
+      p.type.toLowerCase().includes(k.toLowerCase()) || 
+      p.name.toLowerCase().includes(k.toLowerCase())
+    ))
+    .slice(0, 4)
+
+  // If not enough products matched, just take first few
+  if (recommendedProducts.length < 4) {
+    const remaining = products
+      .filter(p => !recommendedProducts.includes(p))
+      .slice(0, 4 - recommendedProducts.length)
+    recommendedProducts.push(...remaining)
+  }
+
   return {
     skinType,
     concerns: skinConcerns.length > 0 ? skinConcerns : ["Healthy skin balance"],
     recommendations: baseRecs[skinType] || baseRecs.Normal,
     analysis: analysisScores[skinType] || analysisScores.Normal,
     detailedNotes: `Based on your survey responses, your skin appears to be ${skinType.toLowerCase()} type with ${skinConcerns[0]?.toLowerCase() || "balanced characteristics"}.`,
+    recommendedProductIds: recommendedProducts.map(p => p.id),
+    recommendedProducts,
   }
 }

@@ -107,10 +107,11 @@ function AiChatPage() {
     setMessages((prev) => [...prev, userMsg]);
     setLoading(true);
 
+    // Only send essential product info to AI (no descriptions - too long)
     const productContext =
       products.length > 0
         ? `\n\nAvailable products:\n${products
-            .map((p) => `- ${p.name} (id:${p.id}, price:₸${p.price}${p.category ? ", category:" + p.category : ""}${p.description ? ", desc:" + p.description.slice(0, 80) : ""})`)
+            .map((p) => `- ${p.name} (id:${p.id}, ₸${p.price}${p.category ? ", " + p.category : ""})`)
             .join("\n")}`
         : "";
 
