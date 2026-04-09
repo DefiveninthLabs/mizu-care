@@ -326,7 +326,7 @@ export default function ProductsPage() {
                             setBasketIds(new Set(next.map((item) => item.id)))
                           }}
                         >
-                          {basketIds.has(product.id) ? "Added" : t('products.addToRoutine')}
+                          {basketIds.has(product.id) ? t('common.added') : t('products.addToRoutine')}
                         </Button>
                       </div>
                     </CardContent>

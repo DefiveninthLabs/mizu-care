@@ -214,7 +214,7 @@ export default function ProductDetailPage() {
               {added ? (
                 <span className="inline-flex items-center gap-2">
                   <Check className="h-4 w-4" />
-                  Added to basket
+                  {t('basket.addedToBasket')}
                 </span>
               ) : (
                 t('product.addToRoutine')

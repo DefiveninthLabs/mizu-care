@@ -9,6 +9,7 @@ export type TranslationKeys = {
   'common.delete': string
   'common.edit': string
   'common.add': string
+  'common.added': string
   'common.search': string
   'common.filter': string
   'common.all': string
@@ -16,6 +17,9 @@ export type TranslationKeys = {
   'common.continue': string
   'common.back': string
   'common.of': string
+
+  // Basket
+  'basket.addedToBasket': string
 
   // Navigation
   'nav.home': string
@@ -204,12 +208,15 @@ export type TranslationKeys = {
 
   // Admin page
   'admin.title': string
+  'admin.subtitle': string
   'admin.addProduct': string
   'admin.editProduct': string
   'admin.deleteConfirm': string
   'admin.totalProducts': string
   'admin.totalBrands': string
   'admin.avgPrice': string
+  'admin.view.list': string
+  'admin.view.cards': string
 }
 
 export const translations: Record<Locale, TranslationKeys> = {
@@ -221,6 +228,7 @@ export const translations: Record<Locale, TranslationKeys> = {
     'common.delete': 'Delete',
     'common.edit': 'Edit',
     'common.add': 'Add',
+    'common.added': 'Added',
     'common.search': 'Search',
     'common.filter': 'Filter',
     'common.all': 'All',
@@ -228,6 +236,8 @@ export const translations: Record<Locale, TranslationKeys> = {
     'common.continue': 'Continue',
     'common.back': 'Back',
     'common.of': 'of',
+
+    'basket.addedToBasket': 'Added to basket',
 
     'nav.home': 'Home',
     'nav.products': 'Products',
@@ -406,12 +416,15 @@ export const translations: Record<Locale, TranslationKeys> = {
     'product.notFound': 'Product not found',
 
     'admin.title': 'Admin',
+    'admin.subtitle': 'Manage your skincare products',
     'admin.addProduct': 'Add Product',
     'admin.editProduct': 'Edit Product',
     'admin.deleteConfirm': 'Are you sure you want to delete "{name}"? This action cannot be undone.',
     'admin.totalProducts': 'Total Products',
     'admin.totalBrands': 'Total Brands',
     'admin.avgPrice': 'Avg. Price',
+    'admin.view.list': 'List',
+    'admin.view.cards': 'Cards',
   },
 
   ru: {
@@ -422,6 +435,7 @@ export const translations: Record<Locale, TranslationKeys> = {
     'common.delete': 'Удалить',
     'common.edit': 'Изменить',
     'common.add': 'Добавить',
+    'common.added': 'Добавлено',
     'common.search': 'Поиск',
     'common.filter': 'Фильтр',
     'common.all': 'Все',
@@ -429,6 +443,8 @@ export const translations: Record<Locale, TranslationKeys> = {
     'common.continue': 'Продолжить',
     'common.back': 'Назад',
     'common.of': 'из',
+
+    'basket.addedToBasket': 'Добавлено в корзину',
 
     'nav.home': 'Главная',
     'nav.products': 'Продукты',
@@ -607,12 +623,15 @@ export const translations: Record<Locale, TranslationKeys> = {
     'product.notFound': 'Продукт не найден',
 
     'admin.title': 'Администратор',
+    'admin.subtitle': 'Управляйте продуктами ухода',
     'admin.addProduct': 'Добавить продукт',
     'admin.editProduct': 'Редактировать продукт',
     'admin.deleteConfirm': 'Вы уверены, что хотите удалить "{name}"? Это действие нельзя отменить.',
     'admin.totalProducts': 'Всего продуктов',
     'admin.totalBrands': 'Всего брендов',
     'admin.avgPrice': 'Средняя цена',
+    'admin.view.list': 'Список',
+    'admin.view.cards': 'Карточки',
   },
 
   kz: {
@@ -623,6 +642,7 @@ export const translations: Record<Locale, TranslationKeys> = {
     'common.delete': 'Жою',
     'common.edit': 'Өзгерту',
     'common.add': 'Қосу',
+    'common.added': 'Қосылды',
     'common.search': 'Іздеу',
     'common.filter': 'Сүзгі',
     'common.all': 'Барлығы',
@@ -630,6 +650,8 @@ export const translations: Record<Locale, TranslationKeys> = {
     'common.continue': 'Жалғастыру',
     'common.back': 'Артқа',
     'common.of': '/',
+
+    'basket.addedToBasket': 'Себетке қосылды',
 
     'nav.home': 'Басты бет',
     'nav.products': 'Өнімдер',
@@ -808,11 +830,14 @@ export const translations: Record<Locale, TranslationKeys> = {
     'product.notFound': 'Өнім табылмады',
 
     'admin.title': 'Әкімші',
+    'admin.subtitle': 'Өнімдерді басқару',
     'admin.addProduct': 'Өнім қосу',
     'admin.editProduct': 'Өнімді өзгерту',
     'admin.deleteConfirm': '"{name}" өнімін жойғыңыз келетініне сенімдісіз бе? Бұл әрекетті болдырмау мүмкін емес.',
     'admin.totalProducts': 'Жалпы өнімдер',
     'admin.totalBrands': 'Жалпы брендтер',
     'admin.avgPrice': 'Орт. баға',
+    'admin.view.list': 'Тізім',
+    'admin.view.cards': 'Карталар',
   },
 }

@@ -209,7 +209,7 @@ export default function AdminPage() {
             </Link>
             <div>
               <h1 className="text-3xl font-bold text-foreground font-display">{t('admin.title')}</h1>
-              <p className="text-muted-foreground">Manage your skincare products</p>
+              <p className="text-muted-foreground">{t('admin.subtitle')}</p>
             </div>
           </div>
 
@@ -225,7 +225,7 @@ export default function AdminPage() {
                 onClick={() => setAndPersistViewMode("list")}
               >
                 <List className="h-4 w-4 mr-2" />
-                List
+                {t('admin.view.list')}
               </Button>
               <Button
                 type="button"
@@ -235,7 +235,7 @@ export default function AdminPage() {
                 onClick={() => setAndPersistViewMode("cards")}
               >
                 <LayoutGrid className="h-4 w-4 mr-2" />
-                Cards
+                {t('admin.view.cards')}
               </Button>
             </div>
 
@@ -406,7 +406,7 @@ export default function AdminPage() {
                   onClick={() => setAndPersistViewMode("list")}
                 >
                   <List className="h-4 w-4 mr-2" />
-                  List
+                  {t('admin.view.list')}
                 </Button>
                 <Button
                   type="button"
@@ -416,7 +416,7 @@ export default function AdminPage() {
                   onClick={() => setAndPersistViewMode("cards")}
                 >
                   <LayoutGrid className="h-4 w-4 mr-2" />
-                  Cards
+                  {t('admin.view.cards')}
                 </Button>
               </div>
             </div>
