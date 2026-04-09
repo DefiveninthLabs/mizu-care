@@ -42,7 +42,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Plus, Pencil, Trash2, Package, ArrowLeft } from "lucide-react"
+import { Plus, Pencil, Trash2, Package, ArrowLeft, LayoutGrid, List } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { LanguageSwitcher } from "@/components/language-switcher"
@@ -62,6 +62,9 @@ interface Product {
 }
 
 const fetcher = (url: string) => fetch(url).then(res => res.json())
+
+type ProductsViewMode = "list" | "cards"
+const PRODUCTS_VIEW_MODE_KEY = "admin-products-view-mode"
 
 const productTypes = [
   "Spray",
@@ -88,6 +91,7 @@ export default function AdminPage() {
   
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+  const [viewMode, setViewMode] = useState<ProductsViewMode>("list")
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -174,6 +178,24 @@ export default function AdminPage() {
     }
   }
 
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(PRODUCTS_VIEW_MODE_KEY)
+      if (raw === "list" || raw === "cards") setViewMode(raw)
+    } catch {
+      // ignore
+    }
+  }, [])
+
+  const setAndPersistViewMode = (mode: ProductsViewMode) => {
+    setViewMode(mode)
+    try {
+      window.localStorage.setItem(PRODUCTS_VIEW_MODE_KEY, mode)
+    } catch {
+      // ignore
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-6 py-8">
@@ -193,6 +215,29 @@ export default function AdminPage() {
 
           <div className="flex items-center gap-4">
             <LanguageSwitcher variant="select" showNativeName />
+
+            <div className="hidden sm:flex items-center rounded-full border border-border/60 bg-background p-1">
+              <Button
+                type="button"
+                size="sm"
+                variant={viewMode === "list" ? "secondary" : "ghost"}
+                className="rounded-full"
+                onClick={() => setAndPersistViewMode("list")}
+              >
+                <List className="h-4 w-4 mr-2" />
+                List
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant={viewMode === "cards" ? "secondary" : "ghost"}
+                className="rounded-full"
+                onClick={() => setAndPersistViewMode("cards")}
+              >
+                <LayoutGrid className="h-4 w-4 mr-2" />
+                Cards
+              </Button>
+            </div>
 
             <Dialog open={isDialogOpen} onOpenChange={(open) => {
               setIsDialogOpen(open)
@@ -347,10 +392,34 @@ export default function AdminPage() {
         {/* Products Table */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Package className="h-5 w-5" />
-              Products
-            </CardTitle>
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <CardTitle className="flex items-center gap-2">
+                <Package className="h-5 w-5" />
+                Products
+              </CardTitle>
+              <div className="flex sm:hidden items-center rounded-full border border-border/60 bg-background p-1">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={viewMode === "list" ? "secondary" : "ghost"}
+                  className="rounded-full"
+                  onClick={() => setAndPersistViewMode("list")}
+                >
+                  <List className="h-4 w-4 mr-2" />
+                  List
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={viewMode === "cards" ? "secondary" : "ghost"}
+                  className="rounded-full"
+                  onClick={() => setAndPersistViewMode("cards")}
+                >
+                  <LayoutGrid className="h-4 w-4 mr-2" />
+                  Cards
+                </Button>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -358,61 +427,155 @@ export default function AdminPage() {
             ) : error ? (
               <div className="text-center py-8 text-destructive">{t('common.error')}</div>
             ) : products && products.length > 0 ? (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Brand</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Usage Tip</TableHead>
-                      <TableHead className="text-right">Price</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {products.map((product) => (
-                      <TableRow key={product.id}>
-                        <TableCell>
-                          <div>
-                            <div className="font-medium">{product.name}</div>
-                            {product.description && (
-                              <div className="text-sm text-muted-foreground line-clamp-1">
-                                {product.description}
-                              </div>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>{product.brand}</TableCell>
-                        <TableCell>
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                            {product.type}
-                          </span>
-                        </TableCell>
-                        <TableCell className="max-w-[200px]">
-                          {product.usage_tip ? (
-                            <span className="text-sm text-muted-foreground line-clamp-2">
-                              {product.usage_tip}
+              viewMode === "list" ? (
+                <div className="overflow-x-auto">
+                  <Table className="table-fixed">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[360px]">Name</TableHead>
+                        <TableHead className="w-[140px]">Brand</TableHead>
+                        <TableHead className="w-[160px]">Type</TableHead>
+                        <TableHead className="w-[260px]">Usage Tip</TableHead>
+                        <TableHead className="text-right">Price</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {products.map((product) => (
+                        <TableRow key={product.id}>
+                          <TableCell className="whitespace-normal align-top">
+                            <div>
+                              <div className="font-medium wrap-break-word line-clamp-2">{product.name}</div>
+                              {product.description && (
+                                <div className="text-sm text-muted-foreground line-clamp-2 wrap-break-word">
+                                  {product.description}
+                                </div>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>{product.brand}</TableCell>
+                          <TableCell>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                              {product.type}
                             </span>
-                          ) : (
-                            <span className="text-xs text-muted-foreground/50 italic">No tip set</span>
+                          </TableCell>
+                          <TableCell className="max-w-[260px] whitespace-normal align-top">
+                            {product.usage_tip ? (
+                              <span className="text-sm text-muted-foreground line-clamp-3 wrap-break-word">
+                                {product.usage_tip}
+                              </span>
+                            ) : (
+                              <span className="text-xs text-muted-foreground/50 italic">No tip set</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right font-medium">
+                            {Number(product.price).toLocaleString('ru-KZ')} ₸
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => openEditDialog(product)}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete Product</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      {t('admin.deleteConfirm', { name: product.name })}
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDelete(product.id)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      Delete
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {products.map((product) => (
+                    <Card
+                      key={product.id}
+                      className="p-0 group overflow-hidden border-border/50 hover:shadow-elevated hover:border-primary/30 transition-all duration-300 h-full flex flex-col"
+                    >
+                      <div className="relative h-64 bg-linear-to-br from-muted to-muted/50 flex items-center justify-center overflow-hidden">
+                        {product.image_url ? (
+                          <Image
+                            src={product.image_url}
+                            alt={product.name}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        ) : (
+                          <div className="h-full w-full flex items-center justify-center text-muted-foreground/50">
+                            <Package className="h-10 w-10" />
+                          </div>
+                        )}
+                      </div>
+                      <CardContent className="p-4 flex-1 flex flex-col">
+                        <div className="flex-1">
+                          <p className="text-xs font-medium text-primary mb-1">{product.brand}</p>
+                          <div className="font-semibold text-foreground mb-2 line-clamp-2 wrap-break-word group-hover:text-primary transition-colors">
+                            {product.name}
+                          </div>
+                          {product.description && (
+                            <div className="text-sm text-muted-foreground line-clamp-2 wrap-break-word mb-3">
+                              {product.description}
+                            </div>
                           )}
-                        </TableCell>
-                        <TableCell className="text-right font-medium">
-                          {Number(product.price).toLocaleString('ru-KZ')} ₸
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-2">
+                          {product.usage_tip ? (
+                            <div className="text-xs text-muted-foreground line-clamp-3 wrap-break-word">
+                              {product.usage_tip}
+                            </div>
+                          ) : null}
+                        </div>
+
+                        <div className="flex items-center justify-between mt-auto pt-3 border-t border-border/50">
+                          <div className="space-y-1">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                              {product.type}
+                            </span>
+                            <div className="font-bold text-foreground">
+                              {Number(product.price).toLocaleString('ru-KZ')} ₸
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2">
                             <Button
-                              variant="ghost"
-                              size="icon"
+                              variant="outline"
+                              size="sm"
+                              className="rounded-full"
                               onClick={() => openEditDialog(product)}
                             >
                               <Pencil className="h-4 w-4" />
                             </Button>
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
-                                <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="rounded-full text-destructive border-destructive/30 hover:text-destructive"
+                                >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </AlertDialogTrigger>
@@ -435,12 +598,12 @@ export default function AdminPage() {
                               </AlertDialogContent>
                             </AlertDialog>
                           </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )
             ) : (
               <div className="text-center py-12">
                 <Package className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
