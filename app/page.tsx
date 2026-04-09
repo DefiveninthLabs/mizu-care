@@ -14,6 +14,14 @@ export type SkinData = {
   skinType: string
   concerns: string[]
   recommendations: string[]
+  analysis?: {
+    hydration: number
+    oiliness: number
+    texture: number
+    clarity: number
+    elasticity: number
+  }
+  detailedNotes?: string
 }
 
 export type AppScreen =
@@ -23,6 +31,20 @@ export type AppScreen =
   | "scanning"
   | "survey"
   | "results"
+
+interface AnalysisResult {
+  skinType: string
+  concerns: string[]
+  recommendations: string[]
+  analysis?: {
+    hydration: number
+    oiliness: number
+    texture: number
+    clarity: number
+    elasticity: number
+  }
+  detailedNotes?: string
+}
 
 export default function SkinAnalysisApp() {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>("home")
@@ -40,35 +62,51 @@ export default function SkinAnalysisApp() {
 
   const handlePhotoCapture = (imageData: string) => {
     setSkinData((prev) => ({ ...prev, image: imageData }))
-    setCurrentScreen("scanning")
-  }
-
-  const handleScanningComplete = () => {
     setCurrentScreen("survey")
   }
 
   const handleSurveyComplete = (answers: Record<string, string>) => {
-    const { skinType, concerns, recommendations } = analyzeSkin(answers)
     setSkinData((prev) => ({
       ...prev,
       surveyAnswers: answers,
-      skinType,
-      concerns,
-      recommendations,
     }))
+    setCurrentScreen("scanning")
+  }
+
+  const handleScanningComplete = (analysisResult?: AnalysisResult) => {
+    if (analysisResult) {
+      // Use AI analysis results
+      setSkinData((prev) => ({
+        ...prev,
+        skinType: analysisResult.skinType,
+        concerns: analysisResult.concerns,
+        recommendations: analysisResult.recommendations,
+        analysis: analysisResult.analysis,
+        detailedNotes: analysisResult.detailedNotes,
+      }))
+    } else {
+      // Fallback to survey-based analysis
+      const { skinType, concerns, recommendations } = analyzeSkinFromSurvey(skinData.surveyAnswers)
+      setSkinData((prev) => ({
+        ...prev,
+        skinType,
+        concerns,
+        recommendations,
+      }))
+    }
     setCurrentScreen("results")
   }
 
   const handleRestart = () => {
-  setSkinData({
-    image: null,
-    surveyAnswers: {},
-    skinType: "",
-    concerns: [],
-    recommendations: [],
-  })
-  setCurrentScreen("home")
-}
+    setSkinData({
+      image: null,
+      surveyAnswers: {},
+      skinType: "",
+      concerns: [],
+      recommendations: [],
+    })
+    setCurrentScreen("home")
+  }
 
   return (
     <main className="min-h-screen bg-[#eef0f1]">
@@ -84,14 +122,15 @@ export default function SkinAnalysisApp() {
           onBack={() => setCurrentScreen("welcome")}
         />
       )}
+      {currentScreen === "survey" && (
+        <SurveyFlow onComplete={handleSurveyComplete} />
+      )}
       {currentScreen === "scanning" && (
         <ScanningScreen
           image={skinData.image}
+          surveyAnswers={skinData.surveyAnswers}
           onComplete={handleScanningComplete}
         />
-      )}
-      {currentScreen === "survey" && (
-        <SurveyFlow onComplete={handleSurveyComplete} />
       )}
       {currentScreen === "results" && (
         <ResultsScreen skinData={skinData} onRestart={handleRestart} />
@@ -100,7 +139,8 @@ export default function SkinAnalysisApp() {
   )
 }
 
-function analyzeSkin(answers: Record<string, string>): {
+// Fallback analysis based on survey answers only
+function analyzeSkinFromSurvey(answers: Record<string, string>): {
   skinType: string
   concerns: string[]
   recommendations: string[]

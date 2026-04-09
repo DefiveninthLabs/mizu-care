@@ -1,19 +1,38 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useI18n } from '@/lib/i18n'
 import type { TranslationKeys } from '@/lib/i18n'
 
-interface ScanningScreenProps {
-  image: string | null
-  onComplete: () => void
+interface AnalysisResult {
+  skinType: string
+  concerns: string[]
+  recommendations: string[]
+  analysis?: {
+    hydration: number
+    oiliness: number
+    texture: number
+    clarity: number
+    elasticity: number
+  }
+  detailedNotes?: string
 }
 
-export default function ScanningScreen({ image, onComplete }: ScanningScreenProps) {
+interface ScanningScreenProps {
+  image: string | null
+  surveyAnswers?: Record<string, string>
+  onComplete: (analysisResult?: AnalysisResult) => void
+}
+
+export default function ScanningScreen({ image, surveyAnswers, onComplete }: ScanningScreenProps) {
   const { t } = useI18n()
   const [currentStep, setCurrentStep] = useState(0)
   const [progress, setProgress] = useState(0)
   const [scanLinePosition, setScanLinePosition] = useState(0)
+  const [analysisComplete, setAnalysisComplete] = useState(false)
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const analysisStarted = useRef(false)
 
   const scanningStepKeys: (keyof TranslationKeys)[] = [
     'scanning.step.texture',
@@ -24,6 +43,41 @@ export default function ScanningScreen({ image, onComplete }: ScanningScreenProp
     'scanning.step.processing',
   ]
 
+  // Start the AI analysis when component mounts
+  useEffect(() => {
+    if (!image || analysisStarted.current) return
+    analysisStarted.current = true
+
+    const analyzeWithAI = async () => {
+      try {
+        const response = await fetch('/api/analyze-skin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            imageData: image,
+            surveyAnswers: surveyAnswers || {},
+          }),
+        })
+
+        if (!response.ok) {
+          throw new Error('Analysis failed')
+        }
+
+        const result = await response.json()
+        setAnalysisResult(result)
+        setAnalysisComplete(true)
+      } catch (err) {
+        console.error('Skin analysis error:', err)
+        setError('Analysis encountered an issue, using survey-based results')
+        setAnalysisComplete(true)
+      }
+    }
+
+    analyzeWithAI()
+  }, [image, surveyAnswers])
+
   useEffect(() => {
     const scanInterval = setInterval(() => {
       setScanLinePosition((prev) => (prev >= 100 ? 0 : prev + 2))
@@ -31,12 +85,23 @@ export default function ScanningScreen({ image, onComplete }: ScanningScreenProp
 
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
+        // If analysis is complete and we've reached 100%, trigger completion
         if (prev >= 100) {
           clearInterval(progressInterval)
           clearInterval(scanInterval)
-          setTimeout(onComplete, 500)
+          
+          // Wait for analysis to complete if not done yet
+          if (analysisComplete) {
+            setTimeout(() => onComplete(analysisResult || undefined), 500)
+          }
           return 100
         }
+        
+        // Slow down progress if analysis isn't complete yet
+        if (prev >= 90 && !analysisComplete) {
+          return prev + 0.2 // Slow progress
+        }
+        
         return prev + 1
       })
     }, 60)
@@ -52,7 +117,17 @@ export default function ScanningScreen({ image, onComplete }: ScanningScreenProp
       clearInterval(progressInterval)
       clearInterval(stepInterval)
     }
-  }, [onComplete])
+  }, [analysisComplete, analysisResult, onComplete])
+
+  // Complete when both progress is 100% and analysis is done
+  useEffect(() => {
+    if (progress >= 100 && analysisComplete) {
+      const timeout = setTimeout(() => {
+        onComplete(analysisResult || undefined)
+      }, 500)
+      return () => clearTimeout(timeout)
+    }
+  }, [progress, analysisComplete, analysisResult, onComplete])
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-foreground px-6 py-12">
@@ -138,8 +213,14 @@ export default function ScanningScreen({ image, onComplete }: ScanningScreenProp
         </div>
 
         <p className="mt-3 text-center text-2xl font-bold text-background">
-          {progress}%
+          {Math.round(progress)}%
         </p>
+        
+        {error && (
+          <p className="mt-2 text-center text-xs text-yellow-400">
+            {error}
+          </p>
+        )}
       </div>
 
       {/* Analysis Stats */}
@@ -160,6 +241,23 @@ export default function ScanningScreen({ image, onComplete }: ScanningScreenProp
           active={progress > 60 && progress <= 90}
         />
       </div>
+
+      {/* AI Analysis Indicator */}
+      {!analysisComplete && progress > 50 && (
+        <div className="mt-6 flex items-center gap-2 text-sm text-background/60">
+          <div className="h-3 w-3 animate-spin rounded-full border border-primary border-t-transparent" />
+          <span>AI analyzing your skin...</span>
+        </div>
+      )}
+      
+      {analysisComplete && analysisResult && (
+        <div className="mt-6 flex items-center gap-2 text-sm text-green-400">
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          <span>Analysis complete</span>
+        </div>
+      )}
     </div>
   )
 }

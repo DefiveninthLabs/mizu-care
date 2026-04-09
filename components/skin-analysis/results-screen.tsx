@@ -11,6 +11,8 @@ import {
   Share2,
   ChevronRight,
   Star,
+  Zap,
+  Layers,
 } from "lucide-react"
 import { useI18n } from '@/lib/i18n'
 
@@ -63,7 +65,7 @@ const productRecommendations: Record<string, Product[]> = {
 
 export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProps) {
   const { t } = useI18n()
-  const { skinType, concerns, recommendations } = skinData
+  const { skinType, concerns, recommendations, analysis, detailedNotes } = skinData
   const products = productRecommendations[skinType] || productRecommendations.Normal
 
   const skinTypeColors: Record<string, string> = {
@@ -82,13 +84,13 @@ export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProp
     Normal: <Sparkles className="h-6 w-6" />,
   }
 
-  const skinTypeTipKeys: Record<string, keyof ReturnType<typeof useI18n>['t'] extends (key: infer K) => string ? K : never, string> = {
+  const skinTypeTipKeys: Record<string, string> = {
     Oily: 'results.tip.oily',
     Dry: 'results.tip.dry',
     Combination: 'results.tip.combination',
     Sensitive: 'results.tip.sensitive',
     Normal: 'results.tip.normal',
-  } as any
+  }
 
   const skinTypeNameKeys: Record<string, string> = {
     Oily: t('results.skinType.oily'),
@@ -107,6 +109,11 @@ export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProp
     morning: ["Cleanser", "Serum", "Moisturizer", "Sunscreen"],
     evening: ["Cleanser", "Treatment", "Serum", "Moisturizer"],
   }
+
+  // Calculate overall skin score from analysis
+  const overallScore = analysis 
+    ? Math.round((analysis.hydration + analysis.texture + analysis.clarity + analysis.elasticity) / 4)
+    : null
 
   return (
     <div className="min-h-screen bg-background pb-8">
@@ -136,11 +143,29 @@ export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProp
             <div className="flex-1">
               <p className="text-sm text-muted-foreground">{t('results.skinType')}</p>
               <h2 className="text-2xl font-bold text-foreground">{skinTypeName}</h2>
+              {overallScore !== null && (
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Skin Score:</span>
+                  <span className={`text-lg font-bold ${overallScore >= 70 ? 'text-green-500' : overallScore >= 50 ? 'text-yellow-500' : 'text-red-500'}`}>
+                    {overallScore}/100
+                  </span>
+                </div>
+              )}
             </div>
           </div>
-          <p className="mt-4 text-pretty text-muted-foreground">
-            {t(tipKey as any)}
-          </p>
+          
+          {/* AI Detailed Notes */}
+          {detailedNotes && (
+            <p className="mt-4 text-pretty text-muted-foreground italic border-l-2 border-primary/30 pl-3">
+              {detailedNotes}
+            </p>
+          )}
+          
+          {!detailedNotes && (
+            <p className="mt-4 text-pretty text-muted-foreground">
+              {t(tipKey as Parameters<typeof t>[0])}
+            </p>
+          )}
 
           {/* Concerns */}
           <div className="mt-6">
@@ -158,6 +183,49 @@ export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProp
           </div>
         </Card>
       </div>
+
+      {/* AI Analysis Metrics */}
+      {analysis && (
+        <div className="mt-8 px-6">
+          <h3 className="text-lg font-semibold text-foreground">
+            Skin Analysis Metrics
+          </h3>
+          <Card className="mt-4 rounded-xl p-4">
+            <div className="space-y-4">
+              <MetricBar 
+                icon={<Droplets className="h-4 w-4" />}
+                label="Hydration" 
+                value={analysis.hydration} 
+                color="bg-blue-500" 
+              />
+              <MetricBar 
+                icon={<Zap className="h-4 w-4" />}
+                label="Oiliness" 
+                value={analysis.oiliness} 
+                color="bg-yellow-500" 
+              />
+              <MetricBar 
+                icon={<Layers className="h-4 w-4" />}
+                label="Texture" 
+                value={analysis.texture} 
+                color="bg-purple-500" 
+              />
+              <MetricBar 
+                icon={<Sparkles className="h-4 w-4" />}
+                label="Clarity" 
+                value={analysis.clarity} 
+                color="bg-green-500" 
+              />
+              <MetricBar 
+                icon={<Sun className="h-4 w-4" />}
+                label="Elasticity" 
+                value={analysis.elasticity} 
+                color="bg-orange-500" 
+              />
+            </div>
+          </Card>
+        </div>
+      )}
 
       {/* Recommendations */}
       <div className="mt-8 px-6">
@@ -219,6 +287,46 @@ export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProp
           <RefreshCw className="mr-2 h-4 w-4" />
           {t('results.restart')}
         </Button>
+      </div>
+    </div>
+  )
+}
+
+function MetricBar({ 
+  icon, 
+  label, 
+  value, 
+  color 
+}: { 
+  icon: React.ReactNode
+  label: string
+  value: number
+  color: string 
+}) {
+  const getStatusText = (val: number) => {
+    if (val >= 80) return "Excellent"
+    if (val >= 60) return "Good"
+    if (val >= 40) return "Fair"
+    return "Needs attention"
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground">{icon}</span>
+          <span className="text-sm font-medium text-foreground">{label}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">{getStatusText(value)}</span>
+          <span className="text-sm font-bold text-foreground">{value}%</span>
+        </div>
+      </div>
+      <div className="h-2 overflow-hidden rounded-full bg-muted">
+        <div 
+          className={`h-full rounded-full transition-all duration-500 ${color}`}
+          style={{ width: `${value}%` }}
+        />
       </div>
     </div>
   )
