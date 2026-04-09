@@ -76,19 +76,17 @@ const productTypes = [
   "Oil",
   "Sunscreen",
   "Enzyme PCT",
-  "Toner Pads",
   "Spot Treatments",
   "Eye Care",
   "Hydrophilic Products",
   "Dietary Supplements",
-  "SPF"
-  ]
+]
 
 export default function AdminPage() {
   const { t } = useI18n()
   const { data: products, error, isLoading } = useSWR<Product[]>('/api/products', fetcher)
   const { data: brands } = useSWR<string[]>('/api/products/brands', fetcher)
-  
+
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [viewMode, setViewMode] = useState<ProductsViewMode>("list")
@@ -131,7 +129,7 @@ export default function AdminPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     const productData = {
       name: formData.name,
       description: formData.description || null,
@@ -156,7 +154,7 @@ export default function AdminPage() {
           body: JSON.stringify(productData)
         })
       }
-      
+
       mutate('/api/products')
       mutate('/api/products/brands')
       mutate('/api/products/types')

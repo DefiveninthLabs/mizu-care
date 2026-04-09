@@ -1,12 +1,10 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
-import useSWR from "swr"
-import { motion } from "framer-motion"
+import { LanguageSwitcher } from "@/components/language-switcher"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import {
   Select,
   SelectContent,
@@ -14,12 +12,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Search, X, Package, ArrowLeft, Filter, ShoppingBag, Lightbulb } from "lucide-react"
-import Link from "next/link"
-import Image from "next/image"
-import { useI18n } from "@/lib/i18n"
-import { LanguageSwitcher } from "@/components/language-switcher"
 import { addToBasket, readBasket } from "@/lib/basket"
+import { useI18n } from "@/lib/i18n"
+import { motion } from "framer-motion"
+import { ArrowLeft, Filter, Lightbulb, Package, Search, ShoppingBag, X } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
+import { useEffect, useMemo, useState } from "react"
+import useSWR from "swr"
 
 interface Product {
   id: number
