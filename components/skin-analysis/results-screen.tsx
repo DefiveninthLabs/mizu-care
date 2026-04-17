@@ -12,7 +12,6 @@ import {
   Sun,
   Sparkles,
   RefreshCw,
-  Share2,
   ChevronRight,
   Zap,
   Layers,
@@ -98,13 +97,6 @@ export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProp
           <h1 className="text-xl font-semibold text-primary-foreground">
             {t('results.title')}
           </h1>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-primary-foreground hover:bg-primary-foreground/10"
-          >
-            <Share2 className="h-5 w-5" />
-          </Button>
         </div>
       </div>
 
@@ -120,7 +112,7 @@ export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProp
               <h2 className="text-2xl font-bold text-foreground">{skinTypeName}</h2>
               {overallScore !== null && (
                 <div className="mt-1 flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Skin Score:</span>
+                  <span className="text-sm text-muted-foreground">{t('results.skinScore')}</span>
                   <span className={`text-lg font-bold ${overallScore >= 70 ? 'text-green-500' : overallScore >= 50 ? 'text-yellow-500' : 'text-red-500'}`}>
                     {overallScore}/100
                   </span>
@@ -163,39 +155,44 @@ export default function ResultsScreen({ skinData, onRestart }: ResultsScreenProp
       {analysis && (
         <div className="mt-8 px-6">
           <h3 className="text-lg font-semibold text-foreground">
-            Skin Analysis Metrics
+            {t('results.metricsTitle')}
           </h3>
           <Card className="mt-4 rounded-xl p-4">
             <div className="space-y-4">
               <MetricBar 
                 icon={<Droplets className="h-4 w-4" />}
-                label="Hydration" 
+                label={t('results.metric.hydration')}
                 value={analysis.hydration} 
                 color="bg-blue-500" 
+                t={t}
               />
               <MetricBar 
                 icon={<Zap className="h-4 w-4" />}
-                label="Oiliness" 
+                label={t('results.metric.oiliness')}
                 value={analysis.oiliness} 
                 color="bg-yellow-500" 
+                t={t}
               />
               <MetricBar 
                 icon={<Layers className="h-4 w-4" />}
-                label="Texture" 
+                label={t('results.metric.texture')}
                 value={analysis.texture} 
                 color="bg-purple-500" 
+                t={t}
               />
               <MetricBar 
                 icon={<Sparkles className="h-4 w-4" />}
-                label="Clarity" 
+                label={t('results.metric.clarity')}
                 value={analysis.clarity} 
                 color="bg-green-500" 
+                t={t}
               />
               <MetricBar 
                 icon={<Sun className="h-4 w-4" />}
-                label="Elasticity" 
+                label={t('results.metric.elasticity')}
                 value={analysis.elasticity} 
                 color="bg-orange-500" 
+                t={t}
               />
             </div>
           </Card>
@@ -280,18 +277,20 @@ function MetricBar({
   icon, 
   label, 
   value, 
-  color 
+  color,
+  t,
 }: { 
   icon: React.ReactNode
   label: string
   value: number
-  color: string 
+  color: string
+  t: ReturnType<typeof useI18n>["t"]
 }) {
   const getStatusText = (val: number) => {
-    if (val >= 80) return "Excellent"
-    if (val >= 60) return "Good"
-    if (val >= 40) return "Fair"
-    return "Needs attention"
+    if (val >= 80) return t('results.metricStatus.excellent')
+    if (val >= 60) return t('results.metricStatus.good')
+    if (val >= 40) return t('results.metricStatus.fair')
+    return t('results.metricStatus.needsAttention')
   }
 
   return (
@@ -319,32 +318,34 @@ function MetricBar({
 function ProductCard({ product }: { product: RecommendedProduct }) {
   return (
     <Link href={`/products/${product.id}`}>
-      <Card className="min-w-[180px] max-w-[180px] shrink-0 overflow-hidden rounded-xl hover:shadow-md transition-shadow cursor-pointer">
-        <div className="relative h-28 w-full bg-secondary">
+      <Card className="min-w-[190px] max-w-[190px] shrink-0 overflow-hidden rounded-xl border-border/50 hover:shadow-md transition-shadow cursor-pointer">
+        <div className="relative h-32 w-full overflow-hidden bg-linear-to-br from-muted to-muted/50">
           {product.image_url ? (
             <Image
               src={product.image_url}
               alt={product.name}
               fill
-              className="object-contain p-2"
-              sizes="180px"
+              className="object-cover"
+              sizes="190px"
             />
           ) : (
             <div className="flex h-full items-center justify-center">
               <ShoppingBag className="h-10 w-10 text-muted-foreground/50" />
             </div>
           )}
+          <div className="absolute left-2 top-2">
+            <span className="rounded-full bg-background/90 px-2 py-0.5 text-[10px] font-medium text-foreground shadow-sm">
+              {product.type}
+            </span>
+          </div>
         </div>
         <div className="p-3">
           <p className="text-xs text-muted-foreground">{product.brand}</p>
-          <p className="mt-0.5 line-clamp-2 text-sm font-medium text-foreground min-h-[2.5rem]">
+          <p className="mt-0.5 min-h-10 line-clamp-2 text-sm font-medium text-foreground">
             {product.name}
           </p>
-          <div className="mt-2 flex items-center justify-between">
+          <div className="mt-2">
             <span className="font-semibold text-foreground">{formatPrice(product.price)}</span>
-            <span className="text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded">
-              {product.type}
-            </span>
           </div>
         </div>
       </Card>

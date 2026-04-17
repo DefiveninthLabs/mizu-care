@@ -181,6 +181,17 @@ export type TranslationKeys = {
   'results.tip.combination': string
   'results.tip.sensitive': string
   'results.tip.normal': string
+  'results.skinScore': string
+  'results.metricsTitle': string
+  'results.metric.hydration': string
+  'results.metric.oiliness': string
+  'results.metric.texture': string
+  'results.metric.clarity': string
+  'results.metric.elasticity': string
+  'results.metricStatus.excellent': string
+  'results.metricStatus.good': string
+  'results.metricStatus.fair': string
+  'results.metricStatus.needsAttention': string
 
   // Products page
   'products.title': string
@@ -218,6 +229,32 @@ export type TranslationKeys = {
   'admin.avgPrice': string
   'admin.view.list': string
   'admin.view.cards': string
+  'admin.tab.products': string
+  'admin.tab.reviews': string
+  'admin.totalReviews': string
+  'admin.averageRating': string
+  'admin.reviews.author': string
+  'admin.reviews.rating': string
+  'admin.reviews.comment': string
+  'admin.reviews.date': string
+  'admin.noProducts': string
+  'admin.addProductHint': string
+  'admin.noReviews': string
+  'admin.reviews.aiAnalyze': string
+  'admin.reviews.aiTitle': string
+  'admin.reviews.period': string
+  'admin.reviews.period.1d': string
+  'admin.reviews.period.1w': string
+  'admin.reviews.period.1m': string
+  'admin.reviews.period.3m': string
+  'admin.reviews.period.6m': string
+  'admin.reviews.generate': string
+  'admin.reviews.analyzing': string
+  'admin.reviews.analyzedCount': string
+  'admin.reviews.actions': string
+  'admin.reviews.remove': string
+  'admin.reviews.deleteTitle': string
+  'admin.reviews.deleteConfirm': string
 
   // Review form
   'review.title': string
@@ -405,6 +442,17 @@ export const translations: Record<Locale, TranslationKeys> = {
     'results.tip.combination': 'Balance is key - use targeted treatments for different zones.',
     'results.tip.sensitive': 'Gentle, fragrance-free products are your best friends.',
     'results.tip.normal': 'Maintain your healthy skin with preventative care.',
+    'results.skinScore': 'Skin Score:',
+    'results.metricsTitle': 'Skin Analysis Metrics',
+    'results.metric.hydration': 'Hydration',
+    'results.metric.oiliness': 'Oiliness',
+    'results.metric.texture': 'Texture',
+    'results.metric.clarity': 'Clarity',
+    'results.metric.elasticity': 'Elasticity',
+    'results.metricStatus.excellent': 'Excellent',
+    'results.metricStatus.good': 'Good',
+    'results.metricStatus.fair': 'Fair',
+    'results.metricStatus.needsAttention': 'Needs attention',
 
     'products.title': 'Products',
     'products.searchPlaceholder': 'Search products by name, brand, or description...',
@@ -439,6 +487,32 @@ export const translations: Record<Locale, TranslationKeys> = {
     'admin.avgPrice': 'Avg. Price',
     'admin.view.list': 'List',
     'admin.view.cards': 'Cards',
+    'admin.tab.products': 'Products',
+    'admin.tab.reviews': 'Reviews',
+    'admin.totalReviews': 'Total Reviews',
+    'admin.averageRating': 'Average Rating',
+    'admin.reviews.author': 'Author',
+    'admin.reviews.rating': 'Rating',
+    'admin.reviews.comment': 'Comment',
+    'admin.reviews.date': 'Date',
+    'admin.noProducts': 'No products yet',
+    'admin.addProductHint': 'Click "Add Product" to get started',
+    'admin.noReviews': 'No reviews yet',
+    'admin.reviews.aiAnalyze': 'AI Analyze',
+    'admin.reviews.aiTitle': 'AI Review Summary',
+    'admin.reviews.period': 'Period',
+    'admin.reviews.period.1d': 'Last 1 day',
+    'admin.reviews.period.1w': 'Last 1 week',
+    'admin.reviews.period.1m': 'Last 1 month',
+    'admin.reviews.period.3m': 'Last 3 months',
+    'admin.reviews.period.6m': 'Last 6 months',
+    'admin.reviews.generate': 'Generate Summary',
+    'admin.reviews.analyzing': 'Analyzing...',
+    'admin.reviews.analyzedCount': 'Analyzed {count} reviews',
+    'admin.reviews.actions': 'Actions',
+    'admin.reviews.remove': 'Remove',
+    'admin.reviews.deleteTitle': 'Delete Review',
+    'admin.reviews.deleteConfirm': 'Delete review from {name}? This action cannot be undone.',
 
     'review.title': 'Leave a Review',
     'review.name': 'Your Name',
@@ -624,6 +698,17 @@ export const translations: Record<Locale, TranslationKeys> = {
     'results.tip.combination': 'Баланс — главное. Используйте целевые средства для разных зон.',
     'results.tip.sensitive': 'Мягкие продукты без отдушек — ваши лучшие друзья.',
     'results.tip.normal': 'Поддерживайте здоровье кожи профилактическим уходом.',
+    'results.skinScore': 'Оценка кожи:',
+    'results.metricsTitle': 'Показатели анализа кожи',
+    'results.metric.hydration': 'Увлажнение',
+    'results.metric.oiliness': 'Жирность',
+    'results.metric.texture': 'Текстура',
+    'results.metric.clarity': 'Чистота',
+    'results.metric.elasticity': 'Упругость',
+    'results.metricStatus.excellent': 'Отлично',
+    'results.metricStatus.good': 'Хорошо',
+    'results.metricStatus.fair': 'Удовлетворительно',
+    'results.metricStatus.needsAttention': 'Требует внимания',
 
     'products.title': 'Продукты',
     'products.searchPlaceholder': 'Поиск по названию, бренду или описанию...',
@@ -658,6 +743,32 @@ export const translations: Record<Locale, TranslationKeys> = {
     'admin.avgPrice': 'Средняя цена',
     'admin.view.list': 'Список',
     'admin.view.cards': 'Карточки',
+    'admin.tab.products': 'Продукты',
+    'admin.tab.reviews': 'Отзывы',
+    'admin.totalReviews': 'Всего отзывов',
+    'admin.averageRating': 'Средняя оценка',
+    'admin.reviews.author': 'Автор',
+    'admin.reviews.rating': 'Оценка',
+    'admin.reviews.comment': 'Комментарий',
+    'admin.reviews.date': 'Дата',
+    'admin.noProducts': 'Пока нет продуктов',
+    'admin.addProductHint': 'Нажмите "Добавить продукт", чтобы начать',
+    'admin.noReviews': 'Пока нет отзывов',
+    'admin.reviews.aiAnalyze': 'ИИ-анализ',
+    'admin.reviews.aiTitle': 'Сводка отзывов от ИИ',
+    'admin.reviews.period': 'Период',
+    'admin.reviews.period.1d': 'Последний 1 день',
+    'admin.reviews.period.1w': 'Последняя 1 неделя',
+    'admin.reviews.period.1m': 'Последний 1 месяц',
+    'admin.reviews.period.3m': 'Последние 3 месяца',
+    'admin.reviews.period.6m': 'Последние 6 месяцев',
+    'admin.reviews.generate': 'Сгенерировать сводку',
+    'admin.reviews.analyzing': 'Анализ...',
+    'admin.reviews.analyzedCount': 'Проанализировано отзывов: {count}',
+    'admin.reviews.actions': 'Действия',
+    'admin.reviews.remove': 'Удалить',
+    'admin.reviews.deleteTitle': 'Удалить отзыв',
+    'admin.reviews.deleteConfirm': 'Удалить отзыв от {name}? Это действие нельзя отменить.',
 
     'review.title': 'Оставить отзыв',
     'review.name': 'Ваше имя',
@@ -843,6 +954,17 @@ export const translations: Record<Locale, TranslationKeys> = {
     'results.tip.combination': 'Теңгерім — бастысы. Әртүрлі аймақтар үшін арнайы күтімді қолданыңыз.',
     'results.tip.sensitive': 'Хош иіссіз жұмсақ өнімдер — сіздің ең жақсы достарыңыз.',
     'results.tip.normal': 'Профилактикалық күтіммен теріңіздің денсаулығын сақтаңыз.',
+    'results.skinScore': 'Тері ұпайы:',
+    'results.metricsTitle': 'Тері талдау көрсеткіштері',
+    'results.metric.hydration': 'Ылғалдану',
+    'results.metric.oiliness': 'Майлылық',
+    'results.metric.texture': 'Текстура',
+    'results.metric.clarity': 'Тазалық',
+    'results.metric.elasticity': 'Серпімділік',
+    'results.metricStatus.excellent': 'Өте жақсы',
+    'results.metricStatus.good': 'Жақсы',
+    'results.metricStatus.fair': 'Қанағаттанарлық',
+    'results.metricStatus.needsAttention': 'Назар қажет',
 
     'products.title': 'Өнімдер',
     'products.searchPlaceholder': 'Атауы, бренді немесе сипаттамасы бойынша іздеу...',
@@ -877,6 +999,32 @@ export const translations: Record<Locale, TranslationKeys> = {
     'admin.avgPrice': 'Орт. баға',
     'admin.view.list': 'Тізім',
     'admin.view.cards': 'Карталар',
+    'admin.tab.products': 'Өнімдер',
+    'admin.tab.reviews': 'Пікірлер',
+    'admin.totalReviews': 'Жалпы пікірлер',
+    'admin.averageRating': 'Орташа баға',
+    'admin.reviews.author': 'Автор',
+    'admin.reviews.rating': 'Бағалау',
+    'admin.reviews.comment': 'Пікір',
+    'admin.reviews.date': 'Күні',
+    'admin.noProducts': 'Әзірге өнімдер жоқ',
+    'admin.addProductHint': 'Бастау үшін "Өнім қосу" түймесін басыңыз',
+    'admin.noReviews': 'Әзірге пікірлер жоқ',
+    'admin.reviews.aiAnalyze': 'ЖИ талдауы',
+    'admin.reviews.aiTitle': 'ЖИ пікір қорытындысы',
+    'admin.reviews.period': 'Кезең',
+    'admin.reviews.period.1d': 'Соңғы 1 күн',
+    'admin.reviews.period.1w': 'Соңғы 1 апта',
+    'admin.reviews.period.1m': 'Соңғы 1 ай',
+    'admin.reviews.period.3m': 'Соңғы 3 ай',
+    'admin.reviews.period.6m': 'Соңғы 6 ай',
+    'admin.reviews.generate': 'Қорытынды жасау',
+    'admin.reviews.analyzing': 'Талданып жатыр...',
+    'admin.reviews.analyzedCount': 'Талданған пікір саны: {count}',
+    'admin.reviews.actions': 'Әрекеттер',
+    'admin.reviews.remove': 'Жою',
+    'admin.reviews.deleteTitle': 'Пікірді жою',
+    'admin.reviews.deleteConfirm': '{name} пайдаланушысының пікірін жоясыз ба? Бұл әрекетті болдырмау мүмкін емес.',
 
     'review.title': 'Пікір қалдыру',
     'review.name': 'Сіздің атыңыз',

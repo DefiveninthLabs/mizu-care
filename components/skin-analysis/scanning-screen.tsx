@@ -27,7 +27,7 @@ interface ScanningScreenProps {
 }
 
 export default function ScanningScreen({ image, surveyAnswers, onComplete }: ScanningScreenProps) {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const [currentStep, setCurrentStep] = useState(0)
   const [progress, setProgress] = useState(0)
   const [scanLinePosition, setScanLinePosition] = useState(0)
@@ -60,6 +60,7 @@ export default function ScanningScreen({ image, surveyAnswers, onComplete }: Sca
           body: JSON.stringify({
             imageData: image,
             surveyAnswers: surveyAnswers || {},
+            locale,
           }),
         })
 

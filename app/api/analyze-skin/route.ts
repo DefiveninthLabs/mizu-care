@@ -4,6 +4,13 @@ import { productDb, type Product } from "@/lib/db"
 
 const SKIN_ANALYSIS_MODEL =
   process.env.SKIN_ANALYSIS_MODEL || "google/gemini-2.5-flash"
+const localeSchema = z.enum(["en", "ru", "kz"])
+
+const localeInstructions: Record<z.infer<typeof localeSchema>, string> = {
+  en: "English",
+  ru: "Russian",
+  kz: "Kazakh",
+}
 
 const skinAnalysisSchema = z.object({
   skinType: z.enum(["Oily", "Dry", "Combination", "Sensitive", "Normal"]),
@@ -42,7 +49,14 @@ function getMinimalProducts(products: Product[]): MinimalProduct[] {
 export async function POST(req: Request) {
   const requestId = `skin-analysis-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
   try {
-    const { imageData, surveyAnswers } = await req.json()
+    const requestBody = await req.json()
+    const imageData: string | undefined = requestBody?.imageData
+    const surveyAnswers = requestBody?.surveyAnswers
+    const localeParse = localeSchema.safeParse(requestBody?.locale)
+    const userLocale: z.infer<typeof localeSchema> = localeParse.success
+      ? localeParse.data
+      : "en"
+    const responseLanguage = localeInstructions[userLocale]
     console.info(`[${requestId}] Received skin analysis request`, {
       hasImage: Boolean(imageData),
       surveyKeys: surveyAnswers ? Object.keys(surveyAnswers) : [],
@@ -84,6 +98,9 @@ ${JSON.stringify(minimalProducts, null, 0)}`
 
     const prompt = `You are an expert dermatologist AI. Analyze this facial skin image and provide a detailed skin analysis.
 Use a direct, tough-love tone. Do not sugarcoat obvious skin issues. Be honest, slightly exaggerated for motivation, but never insulting.
+The user interface language is ${userLocale}. You MUST write all client-facing text fields in ${responseLanguage}.
+Apply this language rule to: concerns, recommendations, and detailedNotes.
+Do not translate skinType values; keep skinType strictly one of: Oily, Dry, Combination, Sensitive, Normal.
 
 Survey answers from the user:
 - Oiliness level: ${surveyAnswers?.oiliness || "not specified"}

@@ -9,7 +9,6 @@ export async function GET() {
       SELECT id, author_name, rating, comment, created_at 
       FROM reviews 
       ORDER BY created_at DESC 
-      LIMIT 10
     `
     return NextResponse.json(reviews)
   } catch (error) {
