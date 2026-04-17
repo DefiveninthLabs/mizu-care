@@ -529,10 +529,10 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
 
             <div className="relative z-10">
               <h2 className="text-3xl sm:text-5xl font-bold text-black font-display leading-tight max-w-2xl mx-auto">
-                Your perfect skincare routine is 2 minutes away
+                {t('home.finalCta.title')}
               </h2>
               <p className="mt-6 text-black max-w-md mx-auto text-lg">
-                No sign-up required. Take a selfie, answer a few questions, and let our AI do the rest.
+                {t('home.finalCta.subtitle')}
               </p>
               <div className="mt-10">
                 <Button onClick={onStart} size="lg" variant="secondary" className="rounded-full px-10 py-7 text-lg font-medium shadow-elevated hover:scale-105 transition-transform">

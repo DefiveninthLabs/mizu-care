@@ -74,6 +74,8 @@ export type TranslationKeys = {
   'home.cta.title': string
   'home.cta.subtitle': string
   'home.cta.button': string
+  'home.finalCta.title': string
+  'home.finalCta.subtitle': string
   'home.footer.privacy': string
   'home.footer.terms': string
   'home.footer.contact': string
@@ -340,6 +342,8 @@ export const translations: Record<Locale, TranslationKeys> = {
     'home.cta.title': 'Ready to Meet Your Skin?',
     'home.cta.subtitle': 'Join 50,000+ people who discovered their perfect routine.',
     'home.cta.button': 'Start Free Analysis',
+    'home.finalCta.title': 'Your perfect skincare routine is 2 minutes away',
+    'home.finalCta.subtitle': 'No sign-up required. Take a selfie, answer a few questions, and let our AI do the rest.',
     'home.footer.privacy': 'Privacy Policy',
     'home.footer.terms': 'Terms of Service',
     'home.footer.contact': 'Contact',
@@ -596,6 +600,8 @@ export const translations: Record<Locale, TranslationKeys> = {
     'home.cta.title': 'Готовы познакомиться со своей кожей?',
     'home.cta.subtitle': 'Присоединяйтесь к 50 000+ людей, которые нашли идеальный уход.',
     'home.cta.button': 'Начать бесплатный анализ',
+    'home.finalCta.title': 'Ваш идеальный уход за кожей в 2 минутах',
+    'home.finalCta.subtitle': 'Без регистрации. Сделайте селфи, ответьте на несколько вопросов, и наш ИИ сделает остальное.',
     'home.footer.privacy': 'Политика конфиденциальности',
     'home.footer.terms': 'Условия использования',
     'home.footer.contact': 'Контакты',
@@ -814,7 +820,7 @@ export const translations: Record<Locale, TranslationKeys> = {
     'home.hero.title2': 'Шешілді.',
     'home.hero.subtitle': 'Болжамды тоқтатыңыз. MizuCaire компьютерлік көру арқылы теріңіздің бірегей профилін жасайды және нақты жұмыс істейтін күтім бағдарламасы�� жасайды.',
     'home.hero.cta': 'Теріні талдау',
-    'home.hero.science': 'Бесплатная консультация',
+    'home.hero.science': 'Тегін кеңес',
     'home.stats.scans': 'Сканерлеу аяқталды',
     'home.stats.rating': 'Пайдаланушы рейтингі',
     'home.stats.accuracy': 'Дәлдік деңгейі',
@@ -852,6 +858,8 @@ export const translations: Record<Locale, TranslationKeys> = {
     'home.cta.title': 'Теріңізбен танысуға дайынсыз ба?',
     'home.cta.subtitle': '50 000+ адаммен бірге мінсіз күтім бағдарламасын тауып алыңыз.',
     'home.cta.button': 'Тегін талдауды бастау',
+    'home.finalCta.title': 'Сіздің мінсіз тері күтімі жоспарыңызға 2 минут қалды',
+    'home.finalCta.subtitle': 'Тіркелу қажет емес. Селфи түсіріп, бірнеше сұраққа жауап беріңіз, қалғанын ЖИ жасайды.',
     'home.footer.privacy': 'Құпиялылық саясаты',
     'home.footer.terms': 'Қызмет шарттары',
     'home.footer.contact': 'Байланыс',
