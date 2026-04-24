@@ -28,11 +28,17 @@ When listing prices, use the currency as given. Be concise and friendly.
 If user asks general questions not related to products, just answer normally without the <products> tag.`;
 
 function ProductCard({ product }: { product: Product }) {
+  function handleProductClick(e: React.MouseEvent<HTMLAnchorElement>) {
+    e.preventDefault();
+    window.open(`/products/${product.id}`, "_blank", "noopener,noreferrer");
+  }
+
   return (
     <a
       href={`/products/${product.id}`}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={handleProductClick}
       className="product-card"
     >
       <div className="product-info">
