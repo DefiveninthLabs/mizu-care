@@ -42,11 +42,16 @@ export default function CameraCapture({ onCapture, onBack }: CameraCaptureProps)
         stream.getTracks().forEach((track) => track.stop())
       }
 
+      const isPortraitMobile =
+        typeof window !== "undefined" &&
+        window.matchMedia("(max-width: 768px) and (orientation: portrait)").matches
+
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode,
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
+          width: { ideal: isPortraitMobile ? 720 : 1280 },
+          height: { ideal: isPortraitMobile ? 1280 : 720 },
+          aspectRatio: { ideal: isPortraitMobile ? 9 / 16 : 16 / 9 },
         },
         audio: false,
       })
@@ -247,9 +252,9 @@ export default function CameraCapture({ onCapture, onBack }: CameraCaptureProps)
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-foreground">
+    <div className="flex h-dvh flex-col overflow-hidden bg-foreground">
       {/* Header */}
-      <div className="flex items-center justify-between p-4">
+      <div className="flex items-center justify-between px-4 py-3 md:p-4">
         <Button
           variant="ghost"
           size="icon"
@@ -270,7 +275,7 @@ export default function CameraCapture({ onCapture, onBack }: CameraCaptureProps)
       </div>
 
       {/* Camera View */}
-      <div className="relative flex flex-1 items-center justify-center">
+      <div className="relative flex min-h-0 flex-1 items-center justify-center">
         {error ? (
           <div className="px-6 text-center text-background">
             <p className="mb-4">{error}</p>
@@ -363,7 +368,7 @@ export default function CameraCapture({ onCapture, onBack }: CameraCaptureProps)
       </div>
 
       {/* Controls */}
-      <div className="flex items-center justify-center gap-8 p-8">
+      <div className="flex items-center justify-center gap-6 px-6 pb-[max(env(safe-area-inset-bottom),1rem)] pt-4 md:gap-8 md:p-8">
         {capturedImage ? (
           <>
             <Button
