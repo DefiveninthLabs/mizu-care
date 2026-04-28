@@ -17,6 +17,9 @@ export type TranslationKeys = {
   'common.continue': string
   'common.back': string
   'common.of': string
+  'common.next': string
+  'common.previous': string
+  'common.page': string
 
   // Basket
   'basket.addedToBasket': string
@@ -297,6 +300,9 @@ export const translations: Record<Locale, TranslationKeys> = {
     'common.continue': 'Continue',
     'common.back': 'Back',
     'common.of': 'of',
+    'common.next': 'Next',
+    'common.previous': 'Previous',
+    'common.page': 'Page',
 
     'basket.addedToBasket': 'Added to basket',
 
@@ -563,6 +569,9 @@ export const translations: Record<Locale, TranslationKeys> = {
     'common.continue': 'Продолжить',
     'common.back': 'Назад',
     'common.of': 'из',
+    'common.next': 'Вперед',
+    'common.previous': 'Назад',
+    'common.page': 'Страница',
 
     'basket.addedToBasket': 'Добавлено в корзину',
 
@@ -829,6 +838,9 @@ export const translations: Record<Locale, TranslationKeys> = {
     'common.continue': 'Жалғастыру',
     'common.back': 'Артқа',
     'common.of': '/',
+    'common.next': 'Келесі',
+    'common.previous': 'Алдыңғы',
+    'common.page': 'Бет',
 
     'basket.addedToBasket': 'Себетке қосылды',
 

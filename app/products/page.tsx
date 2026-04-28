@@ -12,6 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { ProductCard } from "@/components/product-card"
+import { HistoryButton } from "@/components/history-button"
 import { addToBasket, readBasket } from "@/lib/basket"
 import { useI18n } from "@/lib/i18n"
 import { motion } from "framer-motion"
@@ -60,25 +62,8 @@ const typeColors: Record<string, string> = {
 
 export default function ProductsPage() {
   const { t } = useI18n()
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedBrand, setSelectedBrand] = useState<string>("")
-  const [selectedType, setSelectedType] = useState<string>("")
-  const [basketIds, setBasketIds] = useState<Set<number>>(() => new Set())
-  
-  const { data: products, isLoading } = useSWR<Product[]>('/api/products', fetcher)
-  const { data: brands } = useSWR<string[]>('/api/products/brands', fetcher)
-  const { data: types } = useSWR<string[]>('/api/products/types', fetcher)
-
-  useEffect(() => {
-    const refresh = () => {
-      const ids = new Set(readBasket().map((item) => item.id))
-      setBasketIds(ids)
-    }
-
-    refresh()
-    window.addEventListener("storage", refresh)
-    return () => window.removeEventListener("storage", refresh)
-  }, [])
+  const [currentPage, setCurrentPage] = useState(1)
+  const ITEMS_PER_PAGE = 12
 
   const filteredProducts = useMemo(() => {
     if (!products) return []
@@ -95,6 +80,17 @@ export default function ProductsPage() {
       return matchesSearch && matchesBrand && matchesType
     })
   }, [products, searchQuery, selectedBrand, selectedType])
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchQuery, selectedBrand, selectedType])
+
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE)
+  const paginatedProducts = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE
+    return filteredProducts.slice(start, start + ITEMS_PER_PAGE)
+  }, [filteredProducts, currentPage])
 
   const clearFilters = () => {
     setSearchQuery("")
@@ -132,6 +128,7 @@ export default function ProductsPage() {
                 Basket
               </Button>
             </Link>
+            <HistoryButton />
             <LanguageSwitcher variant="minimal" />
           </div>
         </div>
@@ -143,12 +140,12 @@ export default function ProductsPage() {
           {/* Search Bar */}
           <div className="relative max-w-xl">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
+            <input
               type="search"
               placeholder={t('products.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-10 py-6 rounded-full bg-card border-border/50"
+              className="w-full pl-10 pr-10 py-3 rounded-full bg-card border border-border/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
             {searchQuery && (
               <button
@@ -249,92 +246,90 @@ export default function ProductsPage() {
               </Card>
             ))}
           </div>
-        ) : filteredProducts.length > 0 ? (
-          <motion.div 
-            initial="hidden" 
-            animate="visible" 
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-          >
-            {filteredProducts.map((product, i) => (
-              <motion.div key={product.id} custom={i} variants={fadeUp}>
-                <Link href={`/products/${product.id}`} className="block h-full">
-                  <Card className="p-0 group overflow-hidden border-border/50 hover:shadow-elevated hover:border-primary/30 transition-all duration-300 h-full flex flex-col cursor-pointer">
-                    {/* Product Image */}
-                    <div className="relative h-64 bg-linear-to-br from-muted to-muted/50 flex items-center justify-center overflow-hidden">
-                      {product.image_url ? (
-                        <Image 
-                          src={product.image_url} 
-                          alt={product.name}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="flex flex-col items-center justify-center text-muted-foreground/50">
-                          <ShoppingBag className="h-12 w-12 mb-2" />
-                          <span className="text-xs">{product.type}</span>
-                        </div>
-                      )}
-                      {/* Type Badge */}
-                      <div className="absolute top-3 left-3">
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${typeColors[product.type] || 'bg-gray-500/10 text-gray-600'}`}>
-                          {product.type}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    {/* Product Info */}
-                    <CardContent className="p-4 flex-1 flex flex-col">
-                      <div className="flex-1">
-                        <p className="text-xs font-medium text-primary mb-1">{product.brand}</p>
-                        <h3 className="font-semibold text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-                          {product.name}
-                        </h3>
-                        {product.description && (
-                          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                            {product.description}
-                          </p>
-                        )}
-                        {/* Usage Tip */}
-                        {product.usage_tip && (
-                          <div className="flex items-start gap-2 rounded-lg bg-primary/5 border border-primary/15 px-3 py-2 mb-3">
-                            <Lightbulb className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
-                            <p className="text-xs text-foreground line-clamp-2 leading-relaxed">
-                              {product.usage_tip}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex items-center justify-between mt-auto pt-3 border-t border-border/50">
-                        <span className="text-lg font-bold text-foreground">
-                          {Number(product.price).toLocaleString('ru-KZ')} ₸
-                        </span>
+        ) : paginatedProducts.length > 0 ? (
+          <>
+            <motion.div 
+              key={currentPage}
+              initial="hidden" 
+              animate="visible" 
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            >
+              {paginatedProducts.map((product, i) => (
+                <motion.div key={product.id} custom={i} variants={fadeUp}>
+                  <ProductCard
+                    product={product}
+                    isAdded={basketIds.has(product.id)}
+                    onAdd={() => {
+                      const next = addToBasket({
+                        id: product.id,
+                        name: product.name,
+                        price: Number(product.price),
+                        brand: product.brand,
+                        type: product.type,
+                        image_url: product.image_url,
+                      })
+                      setBasketIds(new Set(next.map((item) => item.id)))
+                    }}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="mt-12 flex items-center justify-center gap-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="rounded-full px-4"
+                >
+                  {t('common.previous')}
+                </Button>
+                
+                <div className="flex items-center gap-2">
+                  {[...Array(totalPages)].map((_, i) => {
+                    const page = i + 1
+                    // Show only first, last, and pages around current
+                    if (
+                      page === 1 || 
+                      page === totalPages || 
+                      (page >= currentPage - 1 && page <= currentPage + 1)
+                    ) {
+                      return (
                         <Button
+                          key={page}
+                          variant={currentPage === page ? "default" : "ghost"}
                           size="sm"
-                          variant="secondary"
-                          className="rounded-full"
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            const next = addToBasket({
-                              id: product.id,
-                              name: product.name,
-                              price: Number(product.price),
-                              brand: product.brand,
-                              type: product.type,
-                              image_url: product.image_url,
-                            })
-                            setBasketIds(new Set(next.map((item) => item.id)))
-                          }}
+                          onClick={() => setCurrentPage(page)}
+                          className="w-9 h-9 rounded-full p-0"
                         >
-                          {basketIds.has(product.id) ? t('common.added') : t('products.addToRoutine')}
+                          {page}
                         </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </motion.div>
-            ))}
-          </motion.div>
+                      )
+                    } else if (
+                      (page === 2 && currentPage > 3) ||
+                      (page === totalPages - 1 && currentPage < totalPages - 2)
+                    ) {
+                      return <span key={page} className="text-muted-foreground">...</span>
+                    }
+                    return null
+                  })}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="rounded-full px-4"
+                >
+                  {t('common.next')}
+                </Button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-16">
             <Package className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />

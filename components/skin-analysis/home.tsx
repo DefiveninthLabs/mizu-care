@@ -31,6 +31,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import { HistoryButton } from "@/components/history-button"
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
@@ -166,12 +167,14 @@ const HomeScreen = ({ onStart }: { onStart: () => void }) => {
             <a href="/chat" className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground transition-colors">
               {t('nav.consulting')}
             </a>
+            <HistoryButton />
             <LanguageSwitcher variant="minimal" className="hidden sm:flex" />
             <Button onClick={onStart} size="sm" className="rounded-full">
               {t('nav.tryScan')} <ArrowRight className="ml-1 h-3.5 w-3.5" />
             </Button>
           </div>
           <div className="sm:hidden flex items-center gap-2">
+            <HistoryButton />
             <Button onClick={onStart} size="sm" className="rounded-full">
               {t('nav.tryScan')}
             </Button>

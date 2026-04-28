@@ -11,6 +11,7 @@ import { ArrowLeft, ShoppingBag, Lightbulb, Tag, Info, Check } from "lucide-reac
 import Image from "next/image"
 import Link from "next/link"
 import { useI18n } from "@/lib/i18n"
+import { useTranslatedProduct } from "@/hooks/use-translated-product"
 import { addToBasket } from "@/lib/basket"
 
 interface Product {
@@ -47,10 +48,14 @@ export default function ProductDetailPage() {
   const { t } = useI18n()
   const [added, setAdded] = useState(false)
 
-  const { data: product, isLoading, error } = useSWR<Product>(
+  const { data: initialProduct, isLoading, error } = useSWR<Product>(
     id ? `/api/products/${id}` : null,
     fetcher
   )
+
+  const { product, isTranslating } = useTranslatedProduct(initialProduct)
+  
+  const p = product || initialProduct
 
   if (isLoading) {
     return (
@@ -104,7 +109,7 @@ export default function ProductDetailPage() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <span className="text-sm font-medium text-muted-foreground line-clamp-1 max-w-[200px]">
-              {product.name}
+              {p?.name}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -127,57 +132,62 @@ export default function ProductDetailPage() {
         >
           {/* Product Image */}
           <div className="relative h-72 md:h-96 w-full rounded-2xl overflow-hidden bg-linear-to-br from-muted to-muted/50 flex items-center justify-center">
-            {product.image_url ? (
+            {p?.image_url ? (
               <Image
-                src={product.image_url}
-                alt={product.name}
+                src={p.image_url}
+                alt={p.name}
                 fill
                 className="object-cover"
               />
             ) : (
               <div className="flex flex-col items-center justify-center text-muted-foreground/40">
                 <ShoppingBag className="h-20 w-20 mb-3" />
-                <span className="text-sm">{product.type}</span>
+                <span className="text-sm">{p?.type}</span>
               </div>
             )}
             {/* Type badge */}
             <div className="absolute top-4 left-4">
-              <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${typeColor}`}>
-                {product.type}
+              <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${typeColors[initialProduct?.type || ''] || "bg-gray-500/10 text-gray-600"}`}>
+                {p?.type}
               </span>
             </div>
+            {isTranslating && (
+              <div className="absolute inset-0 bg-background/20 backdrop-blur-[1px] flex items-center justify-center">
+                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              </div>
+            )}
           </div>
 
           {/* Title & Brand */}
           <div>
-            <p className="text-sm font-semibold text-primary mb-1">{product.brand}</p>
+            <p className="text-sm font-semibold text-primary mb-1">{p?.brand}</p>
             <h1 className="text-2xl md:text-3xl font-bold text-foreground text-balance leading-tight mb-3">
-              {product.name}
+              {p?.name}
             </h1>
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="text-2xl font-bold text-foreground">{Number(product.price).toLocaleString('ru-KZ')} ₸</span>
+              <span className="text-2xl font-bold text-foreground">{Number(p?.price).toLocaleString('ru-KZ')} ₸</span>
               <Badge variant="outline" className="rounded-full">
                 <Tag className="h-3 w-3 mr-1" />
-                {product.brand}
+                {p?.brand}
               </Badge>
             </div>
           </div>
 
           {/* Description */}
-          {product.description && (
+          {p?.description && (
               <div className="rounded-2xl border border-border/50 bg-card p-5 space-y-2">
               <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
                 <Info className="h-4 w-4 text-primary" />
                 {t('product.description')}
               </div>
               <p className="text-muted-foreground leading-relaxed text-sm">
-                {product.description}
+                {p.description}
               </p>
             </div>
           )}
 
           {/* Usage Tip */}
-          {product.usage_tip && (
+          {p?.usage_tip && (
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -189,7 +199,7 @@ export default function ProductDetailPage() {
                 {t('product.usageTip')}
               </div>
               <p className="text-foreground leading-relaxed text-sm">
-                {product.usage_tip}
+                {p.usage_tip}
               </p>
             </motion.div>
           )}
@@ -199,13 +209,14 @@ export default function ProductDetailPage() {
             <Button
               className="flex-1 rounded-full py-6 text-base font-semibold"
               onClick={() => {
+                if (!p) return
                 addToBasket({
-                  id: product.id,
-                  name: product.name,
-                  price: Number(product.price),
-                  brand: product.brand,
-                  type: product.type,
-                  image_url: product.image_url,
+                  id: p.id,
+                  name: p.name,
+                  price: Number(p.price),
+                  brand: p.brand,
+                  type: p.type,
+                  image_url: p.image_url,
                 })
                 setAdded(true)
                 window.setTimeout(() => setAdded(false), 1500)
